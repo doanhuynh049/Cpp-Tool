@@ -1,5 +1,5 @@
-#include <iostream>
-#include "../include/factorial.h"
-int main(){
-    printf("%d", Factorial(4));
-}
+// #include <iostream>
+// #include "../include/factorial.h"
+// int main(){
+//     printf("%d", Factorial(4));
+// }

@@ -10,7 +10,8 @@ INPUT_PATH 	:= $(PRO_DIR)/source
 INCLUDE_PATH := $(PRO_DIR)/include
 OUTPUT_PATH := $(PRO_DIR)/output
 
-SOURCES := $(INPUT_PATH)/main.cpp $(INPUT_PATH)/factorial.cpp
+SOURCES := $(INPUT_PATH)/*.cpp $(INPUT_PATH)/*.cc
+#$(INPUT_PATH)/factorial.cpp
 #SOURCES := $(INPUT_PATH)/main.c $(INPUT_PATH)/edit.
 OBJECTS := $(SOURCES:$(INPUT_PATH)/%.c=$(OUTPUT_PATH)/%.o)	# This creates a list of object files from the source files
 EXECUTABLE  := $(OUTPUT_PATH)/results 						# The name of the executable
