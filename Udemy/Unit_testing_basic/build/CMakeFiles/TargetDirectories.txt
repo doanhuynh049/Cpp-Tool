@@ -1,0 +1,4 @@
+/home/quat/gtest/G-test/Udemy/Unit_testing_basic/build/CMakeFiles/my_test.dir
+/home/quat/gtest/G-test/Udemy/Unit_testing_basic/build/CMakeFiles/my_clean.dir
+/home/quat/gtest/G-test/Udemy/Unit_testing_basic/build/CMakeFiles/edit_cache.dir
+/home/quat/gtest/G-test/Udemy/Unit_testing_basic/build/CMakeFiles/rebuild_cache.dir
