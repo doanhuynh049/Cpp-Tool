@@ -1,0 +1,50 @@
+:
+
+#
+# Copyright (c) 1991-2006 TIBCO Software Inc.
+# All rights reserved.
+# For more information, please contact:
+# TIBCO Software Inc., Palo Alto, California, USA
+#
+# $Id: //dev/packages/build/dev/68/src/scripts/rtdf.sh#1 $
+#
+
+# /* ------------------------------------------------------------- */
+
+# rtdf.sh -- get amount of disk space available on current device (in KB)
+
+if [ $RTVERBOSE ] ; then
+  set -x
+fi
+
+os_type=`rtarch -os_type`
+
+if [ $os_type = sunos -o $os_type = solaris -o $RTARCH = m88k_sys5 ]; then
+  # The tr is necessary to strip out extraneous newlines.
+  df . | grep -v Filesystem | tr '\12' ' ' | awk '{print $4}'
+elif [ $os_type = ultrix ]; then
+  df . | tail -1 | awk '{print $4}'
+elif [ $os_type = irix ]; then
+  if [ $RTTANDEM ] ; then
+    df . | grep -v Filesystem | tr '\12' ' ' | awk '{print $4}'
+  else
+    # The tr is necessary to strip out extraneous newlines.
+    df -k . | grep -v Filesystem | tr '\12' ' ' | awk '{print $5}'
+  fi
+elif [ $os_type = hpux ]; then
+  # The tr is necessary to strip out extraneous newlines.
+  bdf . | grep -v Filesystem | tr '\12' ' ' | awk '{print $4}'
+elif [ $os_type = aix ]; then
+  # The tr is necessary to strip out extraneous newlines.
+  df . | grep -v Filesystem | tr '\12' ' ' | awk '{print $3}'
+elif [ $os_type = osf ]; then
+  df -k . | tail -1 | awk '{print $4}'
+elif [ $os_type = cxux ]; then
+  # The tr is necessary to strip out extraneous newlines.
+  df -k . | grep -v Filesystem | tr '\12' ' ' | awk '{print $4}'
+elif [ $os_type = qnx ]; then
+  df . | awk '{print $5}'
+else
+  # big number
+  echo 100000
+fi

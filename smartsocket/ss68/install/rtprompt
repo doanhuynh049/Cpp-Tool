@@ -1,0 +1,43 @@
+:
+
+#
+# Copyright (c) 1991-2006 TIBCO Software Inc.
+# All rights reserved.
+# For more information, please contact:
+# TIBCO Software Inc., Palo Alto, California, USA
+#
+# $Id: //dev/packages/build/dev/68/src/scripts/rtprompt.sh#1 $
+#
+
+# /* -------------------------------------------------------------- */
+
+# rtprompt.csh -- echo a prompt without a newline
+#
+
+if [ $RTVERBOSE ]; then
+  set -x
+fi
+
+# We use this for testing purposes.  I can set this to /usr/5bin/echo
+# on a Sun to test the System V behavior.
+ECHO=echo ; export ECHO
+
+if [ $# -lt  1 ]; then
+  $ECHO Usage: $0 prompt
+  $ECHO Example: $0 \"Would you like to continue\"
+  exit 1
+fi
+
+# See if echo \c works.  This is System V behavior.
+$ECHO hi\\c > /tmp/rtecho$$.tmp
+grep c /tmp/rtecho$$.tmp > /dev/null 2>&1
+save_status=$?
+#$ECHO save_status is $save_status
+rm -f /tmp/rtecho$$.tmp
+if [ $save_status -eq 0 ] ; then 	# we found \c in the file
+  $ECHO -n "$*"
+else
+  $ECHO "$*"\\c
+fi
+
+exit 0

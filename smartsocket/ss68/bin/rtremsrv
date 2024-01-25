@@ -1,0 +1,32 @@
+:
+
+#
+# Copyright (c) 1991-2006 TIBCO Software Inc.
+# All rights reserved.
+# For more information, please contact:
+# TIBCO Software Inc., Palo Alto, California, USA
+#
+# $Id: //dev/packages/tdf/server/dev/68/src/scripts/rtremsrv.sh#1 $
+#
+
+# /* ------------------------------------------------------------- */
+
+# rtremsrv.csh -- used on remote system to start RTserver
+
+#set echo
+if [ $RTVERBOSE ]; then
+  set -x
+fi
+
+# ----------------------------------------------------------------------
+# This script is designed to be run from a remote shell.  It is hard to
+# get rsh to exit cleanly since rtserver normally starts a child
+# process.  The solution is to attach rtserver's file descriptors to real
+# files.  By using a single script on both VMS and UNIX, interoperability
+# is possible (see bug 2841).  SMW 05/14/94
+# ----------------------------------------------------------------------
+
+rtserver "$@" < /dev/null > /tmp/rtserver$$.tmp 2>&1
+cat /tmp/rtserver$$.tmp
+rm -f /tmp/rtserver$$.tmp
+exit 0

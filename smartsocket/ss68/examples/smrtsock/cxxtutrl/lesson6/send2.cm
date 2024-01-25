@@ -1,0 +1,13 @@
+/* Copyright (c) 1991-2006 TIBCO Software Inc. */
+/* All rights reserved. */
+/* For more information, please contact: */
+/* TIBCO Software Inc., Palo Alto, California, USA */
+/**/
+/* $Id: //dev/packages/examples/ss/dev/68/src/c/cxxtutrl/lesson6/send2.cm#1 $ */
+
+setopt project        smartsockets
+setopt unique_subject       /lesson6/send2
+setopt server_names       start_on_demand:workstation1, start_on_demand:workstation2
+setopt server_start_delay     0.0
+setopt server_write_timeout   1.0
+setopt server_start_max_tries 2

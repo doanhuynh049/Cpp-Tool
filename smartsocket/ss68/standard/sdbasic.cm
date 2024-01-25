@@ -1,0 +1,45 @@
+/* Copyright (c) 1991-2006 TIBCO Software Inc. */
+/* All rights reserved. */
+/* For more information, please contact: */
+/* TIBCO Software Inc., Palo Alto, California, USA */
+/**/
+/* $Id: //dev/packages/tsi/security_drivers/basic/dev/68/src/standard/sdbasic.cm#1 $ */
+
+/* ------------------------------------------------------------- */
+/* sdbasic.cm -- Basic Security Driver option settings           */
+/* ------------------------------------------------------------- */
+
+setopt time_format          full
+
+/* ------------------------------------------------------------- */
+/* Auditing Options                                              */
+/*                                                               */
+/* sd_basic_trace_level:                                         */
+/*   warning = log denials only                                  */
+/*   info    = log allows and denials                            */
+/* ------------------------------------------------------------- */
+setopt sd_basic_trace_level info
+setopt sd_basic_trace_file  $RTHOME/sdbasic.trc
+setopt sd_basic_trace_flags timestamp
+
+/* ------------------------------------------------------------- */
+/* Administrative Message Types                                  */
+/*                                                               */
+/* Only users in the 'admin' group are authorized to publish     */
+/* these message types.                                          */
+/*                                                               */
+/*    -4 = T_MT_SERVER_STOP_CALL                                 */
+/*   -30 = T_MT_CONTROL                                          */
+/*   -99 = T_MT_GRP_STOP_RTGMS                                   */
+/* ------------------------------------------------------------- */
+setopt sd_basic_admin_msg_types -4, -30, -99
+
+/* ------------------------------------------------------------- */
+/* Configuration Options                                         */
+/*                                                               */
+/* sd_basic_acl         - location of ACL configuration data     */
+/* sd_basic_acl_timeout - ACL cache expires after this number of */
+/*                        seconds                                */
+/* ------------------------------------------------------------- */
+setopt sd_basic_acl         $RTHOME/acl
+setopt sd_basic_acl_timeout 3600

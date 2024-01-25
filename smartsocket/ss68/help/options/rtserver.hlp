@@ -1,0 +1,681 @@
+/* --------------------------------------------------------------- */
+/* COPYRIGHT, 1991-2000 TALARIAN CORPORATION. ALL RIGHTS RESERVED. */
+/* UNPUBLISHED -- RIGHTS RESERVED UNDER THE COPYRIGHT LAWS OF      */
+/* THE UNITED STATES. USE OF A COPYRIGHT NOTICE IS PRECAUTIONARY   */
+/* ONLY AND DOES NOT IMPLY PUBLICATION OR DISCLOSURE.              */
+/*                                                                 */
+/* THIS DOCUMENTATION CONTAINS PROPRIETARY AND CONFIDENTIAL        */
+/* INFORMATION OF TALARIAN CORPORATION. USE, DISCLOSURE, OR        */
+/* REPRODUCTION IS PROHIBITED WITHOUT THE PRIOR EXPRESS WRITTEN    */
+/* PERMISSION OF TALARIAN CORPORATION.                             */
+/*                                                                 */
+/*                   RESTRICTED RIGHTS LEGEND                      */
+/*                                                                 */
+/* Use, duplication, or disclosure by the Government is subject    */
+/* to restrictions set forth in subparagraph (c)(1)(ii) of the     */
+/* rights in Technical Data and Computer Software clause at        */
+/* DFARS 252.227-7013.                                             */
+/*                     Talarian Corporation                        */
+/*             333 Distel Circle, Los Altos, CA 94022              */
+/* --------------------------------------------------------------- */
+
+/* server_opt.hlp */
+
+/* $Header: /home/rtworks/cvsroot/src/help/server_opt.hlp,v 1.6 1997/03/11 10:34:24 scott Exp $ */
+
+CLIENT_CONNECT_TIMEOUT
+
+/* synopsis */
+"Client_Connect_Timeout: maximum amount of time RTserver will wait to handshake with a new RTclient"
+
+/* detailed help */
+" "
+"Client_Connect_Timeout specifies the maximum amount of time (in seconds)"
+"RTserver will wait when trying to read an internal initialization message"
+"from a new RTclient process.  If RTserver does not receive the message"
+"within the timeout period, RTserver will destroy the connection to the new"
+"RTclient process."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric "
+"Default: 10.0 (seconds)"
+" "
+
+CLIENT_KEEP_ALIVE_TIMEOUT
+
+/* synopsis */
+"Client_Keep_Alive_Timeout: how long to wait for keep alive from RTclient connection"
+
+/* detailed help */
+" "
+"The Client_Keep_Alive_Timeout option specifies how long (in seconds) to"
+"wait when checking if an RTclient is still alive. If more than"
+"Client_Read_Timeout seconds have occurred since the RTserver last heard"
+"from the RTclient, the RTserver sends a keep alive message to the RTclient."
+"The RTserver waits for the number of seconds you specify here in"
+"Client_Keep_Alive_Timeout to hear back from the RTclient. If the RTserver"
+"does not hear back from the RTclient in that time, the RTserver destroys"
+"the connection to that RTclient. When Client_Keep_Alive_Timeout is set to"
+"0.0, the keep alives are disabled." 
+" "
+"Check to see what values are set for the client-to-server keep alives"
+"(Server_Read_Timeout and Server_Keep_Alive_Timeout). If you want to enable"
+"the server-to-client keep alive, set Client_Keep_Alive_Timeout to a larger"
+"value than the client-to-server keep alives." 
+" "
+"If you enable the server-to-client keep alives by setting"
+"Client_Keep_Alive_Timeout and Client_Read_Timeout to values other than 0.0,"
+"the RTclients connected to this RTserver must be able to process the keep"
+"alive messages from the RTserver, using either TipcSrvMsgProcess or"
+"TipcSrvMainLoop."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric "
+"Default: 0.0 (seconds)"
+" "
+
+CLIENT_MAX_BUFFER
+
+/* synopsis */
+"Client_Max_Buffer: maximum amount of data allowed to be buffered to each RTclient process"
+
+/* detailed help */
+" "
+"Client_Max_Buffer specifies the maximum number of bytes of data that are"
+"allowed to be buffered to each RTclient process.  This maximum buffer size"
+"is used to check for possible network failures.  If RTserver buffers more"
+"than Client_Max_Buffer bytes of data for an RTclient, RTserver will destroy"
+"the connection to the RTclient process."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric "
+"Default: 10000000 (bytes)"
+" "
+
+CLIENT_READ_TIMEOUT
+
+/* synopsis */
+"Client_Read_Timeout: how often data is available for reading from RTclient"
+
+/* detailed help */
+" "
+"The Client_Read_Timeout option specifies how often (in seconds) data is"
+"expected to be available for reading on a connection between an RTserver"
+"and an RTclient. This timeout is used to check for possible network"
+"failures or ghost clients. If a read timeout occurs, the RTserver sends"
+"a keep alive message to the RTclient. The RTserver waits for the number"
+"of seconds you specify in Client_Keep_Alive_Timeout to hear back from"
+"the RTclient. If the RTserver does not hear back from the RTclient in"
+"that time, the RTserver destroys the connection to that RTclient. Checking"
+"for read timeouts is disabled if Client_Read_Timeout is set to 0.0. The"
+"larger the value for Client_Read_Timeout, the longer the RTserver waits"
+"to detect a possible RTclient failure."
+" "
+"Check to see what values are set for the client-to-server keep alives"
+"(Server_Read_Timeout and Server_Keep_Alive_Timeout). If you want to enable"
+"the server-to-client keep alive, set Client_Read_Timeout to a larger value"
+"than the client-to-server keep alives." 
+" "
+"If you enable the server-to-client keep alives by setting"
+"Client_Keep_Alive_Timeout and Client_Read_Timeout to values other than 0.0,"
+"the RTclients connected to this RTserver must be able to process the keep"
+"alive messages from the RTserver, using either TipcSrvMsgProcess or"
+"TipcSrvMainLoop."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric "
+"Default: 0.0 (seconds)"
+" "
+
+CLIENT_RECONNECT_TIMEOUT
+
+/* synopsis */
+"Client_Reconnect_Timeout: maximum amount of time RTserver will wait for a warm RTclient to reconnect"
+
+/* detailed help */
+" "
+"The Client_Reconnect_Timeout option specifies the maximum amount of"
+"time (in seconds) RTserver will wait for a warm RTclient to reconnect"
+"after the RTclient disconnects for any reason from RTserver. The"
+"option Server_Disconnect_Mode in RTclient controls whether or not all"
+"RTserver processes performs this wait. If Server_Disconnect_Mode is"
+"warm, then all RTserver processes save the subject information about"
+"the RTclient and buffer messages for guaranteed message delivery (GMD)"
+"so that no messages are lost. If Server_Disconnect_Mode is gmd_failure"
+"or gmd_success then no waiting takes place."
+" "
+"RTserver does not synchronously wait for the RTclient to reconnect but"
+"instead includes the timeout in its main processing loop. If the warm"
+"RTclient does not reconnect to RTserver within"
+"Client_Reconnect_Timeout seconds, then RTserver will clear the"
+"guaranteed messages that have not been acknowledged by the RTclient"
+"process and send a GMD_NACK message back to the sender of these"
+"messages. The warm RTclient can reconnect to this RTserver or any"
+"other RTserver that this RTserver is connected to."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric "
+"Default: 30.0 (seconds)"
+" "
+
+CONN_MAX_RESTARTS
+
+/* synopsis */
+"Conn_Max_Restarts: max number of times RTserver will restart a server connection after an error"
+
+/* detailed help */
+" "
+"Conn_Max_Restarts specifies the maximum number of times that RTserver will"
+"restart a server connection if an error occurs while accepting a new"
+"RTclient or RTserver.  If RTserver does not restart the connection, then the"
+"connection cannot be used to rendezvous with any new processes.  If"
+"Conn_Max_Restarts is set to 0, then RTserver will always restart a server"
+"connection."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric"
+"Default: 100"
+" "
+
+CONN_NAMES
+
+/* synopsis */
+"Conn_Names: logical connection names used by other processes to find this RTserver"
+
+/* detailed help */
+" "
+"Conn_Names specifies a list of logical connection names used by RTclient"
+"processes and other RTserver processes to find this RTserver. Each logical"
+"connection name has the form protocol:node:address, which can be shortened"
+"to protocol:node, protocol, or node."
+" "
+"This option is required and cannot be unset."
+ " "
+"Type: String List"
+"Default: \"local\", \"tcp\" (UNIX)"
+"         \"tcp\" (Windows, VMS)"
+" "
+
+DEFAULT_CONNECT_PREFIX
+
+/* synopsis */
+"Default_Connect_Prefix default way to interconnect RTservers if not explicitly stated"
+
+/* detailed help */
+"     "
+"The Default_Connect_Prefix option specifies the default connect prefix to"
+"use when one is not specified in a value in the Server_Names option. There"
+"are four possible values:"
+"     connect_all - connect to all RTservers that the new RTserver is"
+"              connected to"
+"     connect_one - connect only to the new RTserver, and not to all the"
+"              RTservers it is connected to"
+"     connect_all_stop - connect to all RTservers that the new RTserver is"
+"              connected to, and stop traversing Server_Names if the first"
+"              connection succeeded (most closely emulates Version 3.5"
+"              behavior)"
+"     connect_one_stop - connect only to the new RTserver, not to all"
+"              the RTservers it is connected to, and stop traversing"
+"              Server_Names if the first connection succeeded"
+"       "
+"Type: Identifier (connect_all | connect_one | connect_all_stop "
+"                  | connect_one_stop)"
+"Default: connect_all"
+"      "
+
+DEFAULT_PROTOCOLS
+
+/* synopsis */ 
+"Default_Protocols: IPC protocols to use if no protocol in Conn_Names, Lm_Names, or Server_Names"
+
+/* detailed help */
+"       "
+"Default_Protocols specifies a list of IPC protocols to try if no protocol"
+"is listed in a logical connection name in the Conn_Names, Lm_Names, and"
+"Server_Names options. The valid default protocols are local and tcp."
+" "
+"Type: Identifier List"
+"Default: local, tcp (UNIX)"
+"         tcp (Windows, VMS)"
+"     "
+
+DEFAULT_SUBJECT_PREFIX
+
+/* synopsis */
+"Default_Subject_Prefix: qualifier to prepend to message subject names that don't start with \"/\""
+
+/* detailed help */
+" "
+"Default_Subject_Prefix specifies the qualifier to prepend to message"
+"subject names that don't start with \"/\".  Subject names are"
+"organized in a hierarchical namespace where the components are"
+"delimited by \"/\".  A subject name that starts with \"/\" is called"
+"an absolute subject name.  All non-absolute subject names have"
+"Default_Subject_Prefix prepended to them in order to create a fully"
+"qualified name for the hierarchical subject namespace."
+" "
+"If this option is unset (UNKNOWN) in RTclient, then RTclient will use the"
+"value of Default_Subject_Prefix from the RTserver it connects to."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: String"
+"Default: \"/\""
+" "
+
+ENABLE_STOP_MSGS
+
+/* synopsis */
+"Enable_Stop_Msgs: whether or not RTserver can be stopped with \"rtserver -stop\""
+
+/* detailed help */
+"        "
+"The Enable_Stop_Msgs option specifies whether or not RTserver can be"
+"stopped with rtserver -stop. By default this option is enabled,"
+"allowing you and all users to stop RTserver.  When disabled, no"
+"variation of the rtserver -stop command is permitted (including"
+"rtserver -stop_all)."
+"        "
+"Security-conscious sites should set this option to FALSE to prevent"
+"accidental shutdown of an entire SmartSockets system."
+"      "
+"Type: Boolean"
+"Default: TRUE"
+"        "
+
+GMD_PUBLISH_TIMEOUT
+
+/* synopsis */
+"Gmd_Publish_Timeout: amount of time to maintain GMD information after last GMD publish to subject"
+
+/* detailed help */
+" "
+"The Gmd_Publish_Timeout option specifies the amount of time RTserver"
+"will continue to maintain GMD information for a subject that has not"
+"been recently published to with GMD.  There is some initial overhead"
+"for the first publish to a subject using GMD and then a smaller amount"
+"of overhead to maintain the GMD accounting information. If no direct"
+"RTclients publish to a subject with GMD in Gmd_Publish_Timeout seconds"
+"or if all direct publishing RTclients disconnect, then RTserver stops"
+"maintaining this GMD accounting until the next GMD publish"
+"occurs. Checking for GMD publishing timeouts is disabled if"
+"Gmd_Publish_Timeout is set to 0.0."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric "
+"Default: 300.0 (seconds)"
+" "
+
+INIT_CONNECT_TIMEOUT
+
+/* synopsis */
+"Init_Connect_Timeout: maximum amount of time to wait after initialization for processes to connect"
+
+/* detailed help */
+" "
+"The Init_Connect_Timeout option specifies the maximum amount of time"
+"(in seconds) RTserver will wait after initialization for processes to"
+"connect to it.  No messages are routed during that time, instead only"
+"new connections are allowed.  This allows all RTclient and RTserver"
+"processes to synchronize for guaranteed message delivery if RTserver"
+"crashes and restarts. The larger the value for Init_Connect_Timeout,"
+"the longer RTserver must wait before performing any message"
+"routing. If Init_Connect_Timeout is set too low, however, RTserver may"
+"not route messages to all appropriate receivers for guaranteed message"
+"delivery because some of the receivers may not have time to connect to"
+"this RTserver."
+" "
+"Note that by default this functionality is disabled as the default"
+"value for Init_Connect_Timeout is 0.0 seconds."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric "
+"Default: 0.0 (seconds)"
+" "
+
+LOG_IN_CLIENT
+
+/* synopsis */
+"Log_In_Client: name of file to use to log incoming messages from RTclient processes"
+
+/* detailed help */
+"     "
+"Log_In_Client specifies the name of a file that RTserver should use to log"
+"incoming messages (of all types) that are received from RTclient processes."
+"    "
+"Type: String"
+"Default: None"
+"     "
+
+LOG_IN_GROUP
+
+/* synopsis */
+"Log_In_Group: name of file to use to log incoming messages from multicast groups"
+
+/* detailed help */
+"     "
+"Log_In_Group option specifies the name of the file that RTserver or RTgms"
+"uses to log incoming messages of all types that are received through"
+"multicast groups. If this option is not set, incoming messages from"
+"multicast groups are not logged." 
+"    "
+"Type: String"
+"Default: None"
+"     "
+
+LOG_IN_SERVER
+
+/* synopsis */
+"Log_In_Server: name of file to use to log incoming messages from other RTserver processes"
+
+/* detailed help */
+"     "
+"Log_In_Server specifies the name of a file that RTserver should use to log"
+"incoming messages (of all types) that are received from other RTserver"
+"processes."
+"    "
+"Type: String"
+"Default: None"
+"     "
+
+LOG_OUT_CLIENT
+
+/* synopsis */
+"Log_Out_Client: name of file to use to log outgoing messages to RTclient processes"
+
+/* detailed help */
+"     "
+"Log_Out_Client specifies the name of a file that RTserver should use to log"
+"outgoing messages (of all types) that are sent to RTclient processes."
+"    "
+"Type: String"
+"Default: None"
+"     "
+
+LOG_OUT_GROUP
+
+/* synopsis */
+"Log_Out_Group: name of file to use to log outgoing messages to multicast groups"
+
+/* detailed help */
+"     "
+"Log_Out_Group option specifies the name of the file that RTserver or RTgms"
+"uses to log outgoing messages of all types that are sent to multicast"
+"groups. If this option is not set, outgoing messages to multicast groups"
+"are not logged." 
+"    "
+"Type: String"
+"Default: None"
+"     "
+
+LOG_OUT_SERVER
+
+/* synopsis */
+"Log_Out_Server: name of file to use to log outgoing messages to other RTserver processes"
+
+/* detailed help */
+"     "
+"Log_Out_Server specifies the name of a file that RTserver should use to log"
+"outgoing messages (of all types) that are sent to other RTserver"
+"processes."
+"    "
+"Type: String"
+"Default: None"
+"     "
+
+MAX_CLIENT_CONNS
+
+/* synopsis */
+"Max_Client_Conns: maximum number of RTclient processes to allow to connect to RTserver"
+
+/* detailed help */
+" "
+"The Max_Client_Conns option specifies the maximum number of RTclient"
+"processes that will be allowed to connect to RTserver. If this limit"
+"is exceeded, no more RTclients will be allowed to connect. While the"
+"techniques described in \"File Descriptor Upper Limit\" can be used to"
+"implement operating system-level brute force limit checking,"
+"Max_Client_Conns provides a more graceful way to enforce a maximum"
+"load on RTserver.  Checking for the number of RTclients is disabled if"
+"Max_Client_Conns is set to 0.0."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric "
+"Default: 0"
+" "
+
+PROMPT
+
+/* synopsis */
+"Prompt: command interface prompt for RTserver"
+
+/* detailed help */
+" "
+"Prompt specifies the name of the command interface prompt for RTserver."
+" "
+"Type: String"
+"Default: SERVER>"
+" "
+
+SERVER_CONNECT_TIMEOUT
+
+/* synopsis */
+"Server_Connect_Timeout: maximum amount of time RTserver will wait to handshake with a new RTserver"
+
+/* detailed help */
+" "
+"Server_Connect_Timeout specifies the maximum amount of time (in seconds)"
+"RTserver will wait when trying to read an internal initialization message"
+"from a new RTserver process.  If RTserver does not receive the message"
+"within the timeout period, RTserver will destroy the connection to the new"
+"RTserver process."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric "
+"Default: 10.0 (seconds)"
+" "
+
+SERVER_KEEP_ALIVE_TIMEOUT
+
+/* synopsis */
+"Server_Keep_Alive_Timeout: how long to wait for keep alive from connection to another RTserver"
+
+/* detailed help */
+" "
+"Server_Keep_Alive_Timeout specifies how long (in seconds) to wait when"
+"checking if the connection to another RTserver is still alive. This check"
+"is called a keep alive, and occurs if more than Server_Read_Timeout seconds"
+"have elapsed since RTserver last read any data from another RTserver. Keep"
+"alives are disabled if Server_Keep_Alive_Timeout is set to 0.0. If the keep"
+"alive fails, the connection to the other RTserver is destroyed. The larger"
+"the value for Server_Keep_Alive_Timeout, the longer RTserver must wait to"
+"detect a possible failure of another RTserver. If Server_Keep_Alive_Timeout"
+"is set too low, however, RTserver may mistakenly think that it has lost its"
+"connection to another RTserver when the other RTserver is merely very busy."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: Numeric	"
+"Default: 5.0 (seconds)"
+" "
+
+SERVER_NAMES
+
+/* synopsis */
+"Server_Names: logical connection names used to find other RTserver processes"
+
+/* detailed help */
+" "
+"Server_Names specifies a list of logical connection names used to"
+"find other RTserver processes. Each logical connection name has the form"
+"protocol:node:address, which can be shortened to protocol:node,"
+"protocol, or node.  If Server_Names is Unknown, then RTserver"
+"will not attempt to find any other RTserver processes."
+" "
+"Type: String "
+"Default: udp_broadcast"
+" "
+
+SERVER_NUM_THREADS
+
+/* synopsis */
+"Server_Num_Threads: number of threads to use in a multi-threaded RTserver process"
+
+/* detailed help */
+" "
+"Server_Num_Threads specifies how many threads should be used in a"
+"multi-thread session with RTserver. The default value is 1, which is a"
+"single-thread model and is the normal mode for RTserver." 
+" "
+"To run in multi-thread mode, your RTserver must be licensed for the"
+"SmartSockets MP option for the RTserver and specify a number of threads"
+"greater than 1 for the Server_Num_Threads option. If you specify a number"
+"greater than 1 and you do not have a SmartSockets MP license for that"
+"RTserver, you receive a warning message when the RTserver is started and"
+"it is started in single-thread mode." 
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric "
+"Default: 1"
+" "
+
+SERVER_READ_TIMEOUT
+
+/* synopsis */
+"Server_Read_Timeout: how often data is expected to be available for reading from another RTserver"
+
+/* detailed help */
+" "
+"Server_Read_Timeout specifies how often (in seconds) data is expected to be"
+"available for reading on the connection to another RTserver. This timeout is"
+"used to check for possible network failures. If a read timeout occurs, a"
+"message is sent to that RTserver to check if the connection is still alive."
+"This check is called a keep alive. Checking for read timeouts is disabled"
+"if Server_Read_Timeout is set to 0.0. The larger the value for "
+"Server_Read_Timeout, the longer RTserver must wait to detect a possible"
+"failure of another RTserver. If Server_Read_Timeout is set too low, however,"
+"RTserver may mistakenly think that it has lost its connection to another"
+"RTserver when the other RTserver is merely very busy."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric	 "
+"Default: 30.0 (seconds)"
+" "
+
+SERVER_RECONNECT_INTERVAL
+
+/* synopsis */
+"Server_Reconnect_Interver: how often to try to automatically reconnect to other RTservers"
+
+/* detailed help */
+" "
+"The Server_Reconnect_Interval option specifies the interval (in"
+"seconds) at which RTserver will attempt to reconnect to other RTserver"
+"processes listed in its Server_Names option.  Reconnects will also be"
+"attempted regularly for those RTservers that cannot be initially"
+"connected to (e.g., because the other RTserver is not currently"
+"running). In order to prevent temporary deadlock, if two RTservers"
+"lose their connection to each other, only one of them (the one that"
+"initially connected to the other) will attempt the reconnect. A"
+"reconnect is attempted immediately and then once again every"
+"Server_Reconnect_Interval seconds.  Automatically attempting to"
+"reconnect to other RTservers is disabled if Server_Reconnect_Interval"
+"is set to 0.0."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric "
+"Default: 30.0 (seconds)"
+" "
+
+UDP_BROADCAST_TIMEOUT
+
+/* synopsis */
+"Udp_Broadcast_Timeout: max time RTserver waits for another RTserver to respond to broadcast"
+
+/* detailed help */
+" "
+"Udp_Broadcast_Timeout specifies the maximum amount of time (in seconds)"
+"RTserver should wait for another RTserver to respond to its broadcast attempt"
+"to find another running RTserver. If no RTserver responds within the timeout"
+"period, RTserver tries the next connection name in the Server_Names"
+"option."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric	 "
+"Default: 5.0 (seconds)"
+" "
+
+UNIQUE_SUBJECT
+
+/* synopsis */
+"Unique_Subject: unique name used to identify RTserver to other processes"
+
+/* detailed help */
+" "
+"Unique_Subject specifies a unique name that RTserver uses to identify"
+"itself when it creates a connection to another RTserver.  This option"
+"has the same name as the RTclient option Unique_Subject, but is only"
+"used as a placehold, and not as the destination for any messages. RTserver"
+"does not allow multiple processes (including all RTclient and RTserver"
+"processes) to have the same value for this option. The default value is"
+" _<Node><Pid>, where <Node> is the network node name of the computer on"
+"which the process is running, and <Pid> is the operating system process"
+"identifier of the process."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Identifier"
+"Default: _NodePid"
+" "
+
+VERBOSE
+
+/* synopsis */
+"Verbose: specifies whether RTserver should output more detailed information"
+
+/* detailed help */
+"     "
+"Verbose, when set to TRUE, causes RTserver to output more detailed"
+"information for each command executed."
+"      "
+"This option is required and cannot be unset."
+" "
+"Type: Boolean "
+"Default: FALSE"
+"     "
+
+ZERO_RECV_GMD_FAILURE
+
+/* synopsis */
+"Zero_Recv_Gmd_Failure: specifies how guaranteed message delivery should complete when zero receivers"
+
+/* detailed help */
+"     "
+"The Zero_Recv_Gmd_Failure option specifies how guaranteed message"
+"delivery should complete when there are no RTclient processes"
+"receiving the destination subject of the message (i.e., the"
+"subject membership list is empty). If Zero_Recv_Gmd_Failure is FALSE"
+"then delivery is considered to be successful and a GMD_ACK message"
+"will be sent back to the sender of the message. If"
+"Zero_Recv_Gmd_Failure is TRUE then delivery is considered to be failed"
+"and a GMD_NACK message will be sent back to the sender of the message."
+"      "
+"This option is required and cannot be unset."
+" "
+"Type: Boolean "
+"Default: FALSE"
+"     "

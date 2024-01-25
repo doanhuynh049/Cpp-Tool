@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 1991-2006 TIBCO Software Inc.
+ * All rights reserved.
+ * For more information, please contact:
+ * TIBCO Software Inc., Palo Alto, California, USA
+ *
+ * $Id: //dev/packages/examples/ss/dev/68/src/c/README#1 $
+ */
+
+README for IPC examples
+
+1.  watchsbj.c -- example program to watch a subject
+
+2.  monitor.c -- example process monitor for starting a hot backup
+
+3.  waitsbj.c -- example program to watch a subject and return when
+    the specified number of processes are receiving that subject.
+
+4.  manual/ -- example programs from "RTserver and IPC Manual"
+
+5.  motifipc.c -- example OSF/Motif external process that receives 
+    messages from RTserver. (This example is not supported under Windows)
+
+6.  tutorial/ -- lessons from SmartSockets tutorial
+
+7.  cxxtutrl/ -- C++ versions of the lessons from SmartSockets tutorial
+
+8.  readmt.c -- example program that reads message type definitions from a
+
+9.  rtclient.jcl -- Sample JCL to be used with IBM OS/390 or zOS systems to 
+    execute SmartSockets client applications in batch using the Unix System
+    Services batch processor.
+
+10. rtserver.jcl -- Sample JCL that can be used to run the rtserver process on
+    IBM OS/390 or zOS as a batch job or started task.

@@ -1,0 +1,33 @@
+/*
+ * Copyright (c) 1991-2006 TIBCO Software Inc.
+ * All rights reserved.
+ * For more information, please contact:
+ * TIBCO Software Inc., Palo Alto, California, USA
+ *
+ * $Id: //dev/packages/examples/ss/dev/68/src/c/manual/README#1 $
+ */
+
+README for IPC examples from "SmartSockets User's Guide"
+
+1.  msg.c      -- example program for messages
+2.  connserv.c -- example program for connections (server process)
+3.  connclnt.c -- example program for connections (client process)
+4.  conngmds.c -- examples program for connection GMD (server process)
+5.  conngmdc.c -- examples program for connection GMD (client process)
+6.  conngmdu.c -- examples program for connection GMD (srv/clnt utilities)
+7.  connmtc.c  -- examples program for threaded connection (client process)
+8.  connmts1.c -- examples program for threaded connection (server process)
+9.  connmts2.c -- examples program for threaded connection (server process)
+10. rtclsnd.c  -- example program for RTclient (sender process)
+11. rtclrcv.c  -- example program for RTclient (receiver process)
+12. rtclutil.c -- example program for RTclient (sndr/rcvr utilities)
+13. rtcladv.c  -- example program for advanced RTclient usage
+14. rtclgmds.c -- example program for RTclient GMD (sender process)
+15. rtclgmdr.c -- example program for RTclient GMD (receiver process)
+16. rtsvcc.c   -- example program for threaded RTclient (consumer process)
+17. rtsvcp.c   -- example program for threaded RTclient (producer process)
+18. lbrecv.c   -- example program for RTclient load balancing (rcvr process)
+19. lbsend.c   -- example program for RTclient load balancing (sender process)
+20. polltraf.c -- example program for polling (monitoring)
+21. watchsbj.c -- example program for watching (monitoring)
+22. guardian.c -- example program for managing a hot backup process

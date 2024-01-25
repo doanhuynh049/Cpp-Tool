@@ -1,0 +1,160 @@
+:
+
+#
+# Copyright (c) 1991-2006 TIBCO Software Inc.
+# All rights reserved.
+# For more information, please contact:
+# TIBCO Software Inc., Palo Alto, California, USA
+#
+# $Id: //dev/packages/tkrnl/dev/68/src/scripts/rtprocess.sh#2 $
+#
+
+# rtprocess.sh -- start an RTworks client process
+
+USET=0
+echo $- | grep u > /dev/null
+if [ $? -ne 1 ]; then
+  USET=1
+  set +u
+fi
+
+#set -x
+if [ $RTVERBOSE ] ; then
+  set -x
+fi
+
+# ----------------------------------------------------------------------
+# This shell script starts an RTworks client process.
+# The files rtdaq, rtie, rthci, etc., are symbolic links to this file.
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# If $RTHOME or $RTARCH is not set, then punt.  The rtinit script is
+# no longer optional.
+# ----------------------------------------------------------------------
+if [ "$RTHOME" = "" -o "$RTARCH" = "" ] ; then
+  echo 'The RTworks environment has not been initialized.'
+  echo 'Please change directory to the main RTworks directory.'
+  echo 'If you are running the C shell (usually ), type'
+  echo '      "source bin/rtinit.csh"'
+  echo 'If you are running the Bourne shell (usually /bin/sh), type'
+  echo '       ". bin/rtinit.sh"'
+  echo 'in response to the prompt to initialize the RTworks environment.'
+  exit 1
+fi
+
+# ----------------------------------------------------------------------
+# Make sure that the file /usr/lib/X11/XKeysymDB is set up OK.
+# ----------------------------------------------------------------------
+# This doesn't work with OpenWindows 3.0.  SMW 12/15/92
+#if (! -e /usr/lib/X11/XKeysymDB) then
+#  echo 'The file /usr/lib/X11/XKeysymDB does not exist.'
+#  echo 'This file is needed to run RTworks.  Please see the'
+#  echo '"RTworks Installation Manual" for instructions on'
+#  echo 'installing this file.'
+#  exit 1
+#else
+#  grep osfActivate /usr/lib/X11/XKeysymDB >& /dev/null
+#  if ($status != 0) then
+#    echo 'The file /usr/lib/X11/XKeysymDB appears to be faulty.'
+#    echo 'This file is needed to run RTworks.  Please see the'
+#    echo '"RTworks Installation Manual" for instructions on'
+#    echo 'installing this file.'
+#    exit 1
+#  endif
+#endif
+
+
+# ----------------------------------------------------------------------
+# Figure out what program to run based on $0.
+# ----------------------------------------------------------------------
+fullname=$0
+basename=`echo $fullname | sed -e 's,^.*/,,'`
+
+# ----------------------------------------------------------------------
+# Should we blow off the full path and find the executable from $PATH?
+# Probably not!  SMW 11/8/91
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# If the environment variable RTPURIFYTEST is set, then run the Purify
+# executable (if it exists).  This will only work internally at TIBCO.
+# SMW 12/9/92
+# ----------------------------------------------------------------------
+if [ "$RTPURIFYTEST" != "" -a -x $RTHOME/bin/$RTARCH/purify_$basename.x ]; then
+  # Use $PATH so we can use $HOME/bin/$RTARCH executables too.  SMW 01/27/95
+  cmd_name=purify_$basename.x
+fi
+
+# ----------------------------------------------------------------------
+# If the environment variable RTQUANTIFYTEST is set, then run the Quantify
+# executable (if it exists).  This will only work internally at TIBCO.
+# BM 02/07/2000
+# ----------------------------------------------------------------------
+if [ "$RTQUANTIFYTEST" != "" -a -x $RTHOME/bin/$RTARCH/quantify_$basename.x ]; then
+  # Use $PATH so we can use $HOME/bin/$RTARCH executables too. BM 02/07/2000
+  cmd_name=quantify_$basename.x
+fi
+
+
+# Dormant stuff.  We only use PureCoverage on SunOS 4.1.X where we can just
+# change LD_LIBRARY_PATH and don't need a purecov_xrunner_ executable.
+# SMW 06/08/95
+# # ----------------------------------------------------------------------
+# # If both the environment variables RTPURECOVTEST and RTXRUNNERTEST are
+# # set, then run the PureCoverage'd XRunner executable (if it exists).
+# # This will only work internally at TIBCO.  SMW 12/06/94
+# # ----------------------------------------------------------------------
+# if ($?RTPURECOVTEST && $?RTXRUNNERTEST && -e $RTHOME/bin/$RTARCH/purecov_xrunner_$basename.x) then
+#   # Use $PATH so we can use $HOME/bin/$RTARCH executables too.  SMW 01/27/95
+#   exec purecov_xrunner_$basename.x $argv:q
+# endif
+
+# ----------------------------------------------------------------------
+# If the environment variable RTPURECOVTEST is set, then run the PureCoverage
+# executable (if it exists).  This will only work internally at TIBCO.
+# SMW 12/01/94
+# ----------------------------------------------------------------------
+if [ "$RTPURECOVTEST" != "" -a -x $RTHOME/bin/$RTARCH/purecov_$basename.x ]; then
+  # Use $PATH so we can use $HOME/bin/$RTARCH executables too.  SMW 01/27/95
+  cmd_name=purecov_$basename.x
+fi
+
+# ----------------------------------------------------------------------
+# If the environment variable RTXRUNNERTEST is set, then run the XRunner
+# executable (if it exists).  This will only work internally at TIBCO.
+# DCG 7/7/94
+# ----------------------------------------------------------------------
+if [ "$RTXRUNNERTEST" != "" -a -x $RTHOME/bin/$RTARCH/xrunner_$basename.x ]; then
+  # Use $PATH so we can use $HOME/bin/$RTARCH executables too.  SMW 01/27/95
+  cmd_name=xrunner_$basename.x
+fi
+
+# ----------------------------------------------------------------------
+# If no command has been set and if the environment variable
+# RTDEV_SHELL is set, then use $PATH to find the executable instead
+# of using the $RTHOME executable.
+# This will only work internally at TIBCO.  SMW 02/09/95
+# ----------------------------------------------------------------------
+if [ "$cmd_name" = "" ] ; then
+  if [ "$RTDEV_SHELL" != "" ] ; then
+    # Use $PATH so we can use $HOME/bin/$RTARCH executables too.  SMW 02/09/95
+    cmd_name=$basename.x
+  else
+    cmd_name=$RTHOME/bin/$RTARCH/$basename.x
+  fi
+fi
+
+# ----------------------------------------------------------------------
+# If there are no parameters, most Bourne shells interpret "$@" as a
+# NULL.  Some versions (QNX and Digital Unix) interpret it as the empty
+# string, "".  When the empty string is passed to a program it counts as
+# an argument in argv/argc and must be handled.  I would rather handle
+# it here than in each of our main programs.  BMQ 04/17/97
+# ----------------------------------------------------------------------
+cmd_args="$@"
+if [ -z "$cmd_args" ] ; then
+  exec $cmd_name
+else
+  exec $cmd_name "$@"
+fi

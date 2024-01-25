@@ -1,0 +1,31 @@
+#! /bin/sh
+
+# serveravg -- produce average of IPC benchmarks
+
+# strip out the non-interesting lines
+grep '[0-9]' $1 > avg.tmp
+
+# get number of lines in file
+lines=`wc -l < avg.tmp`
+
+# send avg
+send_total_msg=`awk '{foo=foo + $8; printf("%d\n", foo);}' < avg.tmp | tail -1`
+send_total_bytes=`awk '{foo=foo + $9; printf("%d\n", foo);}' < avg.tmp | tail -1`
+send_avg_msg=`expr $send_total_msg / $lines`
+send_avg_bytes=`expr $send_total_bytes / $lines`
+
+# recv avg
+recv_total_msg=`awk '{foo=foo + $10; printf("%d\n", foo);}' < avg.tmp | tail -1`
+recv_total_bytes=`awk '{foo=foo + $11; printf("%d\n", foo);}' < avg.tmp | tail -1`
+recv_avg_msg=`expr $recv_total_msg / $lines`
+recv_avg_bytes=`expr $recv_total_bytes / $lines`
+
+# srv avg
+srv_total_msg=`awk '{foo=foo + $12; printf("%d\n", foo);}' < avg.tmp | tail -1`
+srv_total_bytes=`awk '{foo=foo + $13; printf("%d\n", foo);}' < avg.tmp | tail -1`
+srv_avg_msg=`expr $srv_total_msg / $lines`
+srv_avg_bytes=`expr $srv_total_bytes / $lines`
+
+echo "send:   messages  $send_avg_msg   bytes  $send_avg_bytes"
+echo "recv:   messages  $recv_avg_msg   bytes  $recv_avg_bytes"
+echo "server: messages  $srv_avg_msg   bytes  $srv_avg_bytes"

@@ -1,0 +1,34 @@
+!
+! Copyright (c) 1991-2006 TIBCO Software Inc.
+! All rights reserved.
+! For more information, please contact:
+! TIBCO Software Inc., Palo Alto, California, USA
+!
+! $Id: //dev/packages/examples/ss/dev/68/src/java/tutorial/lesson5/remote.opt#1 $
+!
+ss.booleanValue1: true
+ss.booleanValue2: false
+
+ss.doubleValue1: 1.23456
+ss.doubleValue2: 65432.1
+ss.doubleValue3: -1.0
+ss.doubleValue4: 100.0
+
+ss.intValue1: 1
+ss.intValue2: -16384
+ss.intValue3: 2
+ss.intValue4: -2
+ss.intValue5: 32767
+
+ss.bulb: on
+
+ss.stringValue1: The quick red fox jumped over the lazy dog.
+ss.stringValue2: Value1, value_2, VALUE-3, Value4, etc.
+ss.charA: A
+ss.charB: B
+ss.charC: C
+ss.charZ: Z
+
+ss.project: foo_project
+ss.server_names: _node, rocky, bullwinkle
+ss.user_name: javauser

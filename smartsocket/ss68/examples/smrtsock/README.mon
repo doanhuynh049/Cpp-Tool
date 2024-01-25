@@ -1,0 +1,44 @@
+/*
+ * Copyright (c) 1991-2006 TIBCO Software Inc.
+ * All rights reserved.
+ * For more information, please contact:
+ * TIBCO Software Inc., Palo Alto, California, USA
+ *
+ * $Id: //dev/packages/examples/ss/dev/68/src/c/README.mon#1 $
+ */
+
+ monitor.c - monitor IE processes; provide hot switchover if necessary
+
+ USAGE                                                               
+    monitor.x <project>                                          
+                                                                     
+ This program is a RTserver client which provides a primary and      
+ backup RTie for the project passed in as a command line arg. To 
+ use this, one must have two duplicate RTies with different startup  
+ command files. In the first command file, which will be for the     
+ primary RTie, the following lines should be added: 
+                   
+	setopt server_msg_send TRUE                                   
+	subscribe primary_ie                                             
+
+ The second command file, which will be for the "hot backup", the    
+ following lines should be added: 
+                                  
+	setopt server_msg_send FALSE   /* disable outgoing messages */
+        subscribe backup_ie
+                                             
+ One should also have shell scripts to start the primary and backup  
+ RTies named "start_primary_ie" and "start_backup_ie" respectively.    
+                                                                     
+ The monitor program handles the following situtations:
+
+	1. The Primary RTie fails - in this case, control is passed over
+	   to the backup RTie and it becomes the primary. This is done
+	   by sending a control message to the backup RTie to set its 
+	   server_msg_send option to TRUE, enabling output. Further control
+	   messages are sent to unsubscribe the backup_ie subject and 
+	   subscribe the primary_ie subject.
+
+	2. The Backup RTie fails - in this case, the backup RTie is simply
+	   started again. This also happens when the backup RTie is switched
+	   over to the primary RTie.

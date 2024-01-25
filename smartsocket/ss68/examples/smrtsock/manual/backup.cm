@@ -1,0 +1,11 @@
+/* Copyright (c) 1991-2006 TIBCO Software Inc. */
+/* All rights reserved. */
+/* For more information, please contact: */
+/* TIBCO Software Inc., Palo Alto, California, USA */
+/**/
+/* $Id: //dev/packages/examples/ss/dev/68/src/c/manual/backup.cm#1 $ */
+
+echo Entering backup.cmd
+setopt subjects chapter5, backup_client
+setopt server_msg_send false
+setopt enable_control_msgs _all

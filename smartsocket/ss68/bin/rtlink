@@ -1,0 +1,529 @@
+:
+
+#
+# Copyright (c) 1991-2006 TIBCO Software Inc.
+# All rights reserved.
+# For more information, please contact:
+# TIBCO Software Inc., Palo Alto, California, USA
+#
+# $Id: //dev/packages/tkrnl/dev/68/src/scripts/rtlink.sh#2 $
+#
+
+# /* --------------------------------------------------------------- */
+
+# rtlink.sh -- compile program with SmartSockets libraries
+
+#set echo
+if [ $RTVERBOSE ] ; then
+  set -x
+fi
+
+# Initialize variables.
+cc_flags=
+cc_flags_ol=
+cc_flags_bl=
+lib_suffix=
+
+# ----------------------------------------------------------------------
+# This shell script compiles a program with the base RTworks libraries.
+# Example:
+#   rtlink -o my_proc.x my_file.c
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# If $RTHOME or $RTARCH is not set, then punt.  The rtinit script is
+# no longer optional.
+# ----------------------------------------------------------------------
+if [ -z "$RTHOME" -o -z "$RTARCH" ] ; then
+  echo 'The SmartSockets environment has not been initialized.' >&2
+  echo 'Please change directory to the main SmartSockets directory.' >&2
+  echo 'If you are running the C shell (usually ), type' >&2
+  echo '      "source bin/rtinit.csh"' >&2
+  echo 'If you are running the Bourne shell (usually /bin/sh), type' >&2
+  echo '      ". bin/rtinit.sh"' >&2
+  exit 1
+fi
+
+os_type=`rtarch -os_type`
+
+# ----------------------------------------------------------------------
+# As of 6.8, the following are being deprecated:
+#  DV
+#  Any platforms we don't ship or expect to ship
+# Historical support is available through previous versions of rtlink.sh
+# ----------------------------------------------------------------------
+arch_supported=
+case $RTARCH in
+  i86_w32|i86_linux|i86_solaris|ia64_linux|ia64_hpux)
+    arch_supported=1;;
+  hp700_hpux|sun4_solaris|tandem_oss|alpha_osf)
+    arch_supported=1;;
+  iris_irix)
+    [ `rtarch -os_integer` -gt 620 ] && arch_supported=1;;
+  rs6000_aix)
+    [ `uname -v` -gt 4 ] && arch_supported=1;;
+esac
+if [ -z "$arch_supported" ] ; then
+  echo 'The architecture $RTARCH or OS version is not supported.' >&2
+  exit 1
+fi
+
+# ----------------------------------------------------------------------
+# Support for Cygwin/Interix (crude support, anyway)
+# ----------------------------------------------------------------------
+case `uname` in
+  CYGWIN*)
+    export RTHOME="`cygpath -w $RTHOME`"
+    rtlink.exe "$@"
+    exit 0
+    ;;
+  Interix*)
+    # Unlike 'cygpath', this breaks if RTHOME is not in POSIX format :(
+    export RTHOME="`unixpath2win $RTHOME`"
+    rtlink.exe "$@"
+    exit 0
+    ;;
+esac
+
+# ----------------------------------------------------------------------
+# If the environment variable RTPURIFYTEST is set, link with Purify.
+# ----------------------------------------------------------------------
+if [ $RTPURIFYTEST ] ; then
+  if [ $RTQUANTIFYTEST ] ; then
+    echo 'Cannot link with both Purify and Quantify.' >&2
+    exit 1
+  fi
+  rtpurify=1
+fi
+
+if [ $RTQUANTIFYTEST ] ; then
+  if [ $rtpurify ] ; then
+    echo 'Cannot link with both Purify and Quantify.' >&2
+    exit 1
+  fi
+  rtquantify=1
+fi
+
+# ----------------------------------------------------------------------
+# If the environment variable RTPURECOVTEST is set, link with PureCoverage.
+# ----------------------------------------------------------------------
+if [ $RTPURECOVTEST ] ; then
+  if [ $rtquantify ] ; then
+    echo 'Cannot link with both PureCoverage and Quantify.' >&2
+    exit 1
+  fi
+  rtpurecov=1
+fi
+
+# ----------------------------------------------------------------------
+# If the environment variable RTPURELINK is set, link with PureLink.
+# ----------------------------------------------------------------------
+if [ $RTPURELINKTEST ] ; then
+  rtpurelink=1
+fi
+
+case $RTARCH in
+  sun4_solaris|i86_solaris)
+    cc_flags_ol='-xO4'
+    ;;
+  i86_linux|ia64_linux)
+    cc_flags_ol='-O3'
+    [ $RTARCH = i86_linux ] && cc_flags_bl='-m32'
+    ;;
+  *)
+    cc_flags_ol='-O'
+    ;;
+esac
+
+# ----------------------------------------------------------------------
+# Strip out the special flags:
+#   -echo (echo command but do not execute)
+#   -help (print usage message and exit)
+#   -64bit (to build with 64-bit libraries)
+#   -purify (link using Purify)
+#   -purelink (link using PureLink)
+#   -purecov (link using PureCoverage)
+#   -quantify (link using Quantify)
+#   -verbose (echo command before executing it)
+#   -optimized (link with optimized libraries)
+#   -{default|debug|check} (link with debug libraries)
+#   -cxx (link using native C++ compiler and RTworks C++ class libraries)
+#   -cpp (link using native C++ compiler and new RTworks C++ class libraries)
+#   -static_link (link with .a archive libraries instead of shared libraries)
+#   -os_static_link (-static_link plus static system libs: NOT supported
+#                    on all platforms)
+# ----------------------------------------------------------------------
+for arg in $*
+do
+  case $arg in
+    -echo)
+      rtecho=1
+      shift;;
+    -help)
+      # Base the script name in help msg on RTLINKFIRSTLIB if possible.
+      script="rtlink"
+      if [ "$RTLINKFIRSTLIB" != "" ] ; then
+        script="rtlink`echo $RTLINKFIRSTLIB | sed 's/-lrt//g'`"
+      fi
+      # Special support for rtlinksecur* -help.
+      if [ "$RTLINKNAME" != "" ] ; then
+        script=$RTLINKNAME
+      fi
+      echo "Usage: $script [ -echo ] [ -help ] [ -64bit ] [ -verbose ]" >&2
+      echo "              [ -static_link ] [ -check ] [ -optimized ]" >&2
+      echo "              [ -cxx | -cpp ] [ <CompilerOptions> ] <files>" >&2
+      exit 0
+      ;;
+    -purify)
+      rtpurify=1
+      if [ $rtquantify ] ; then
+        echo 'Cannot link with both Purify and Quantify.' >&2
+        exit 1
+      fi
+      shift;;
+    -purelink)
+      rtpurelink=1
+      shift;;
+    -purecov)
+      rtpurecov=1
+      if [ $rtquantify ] ; then
+        echo 'Cannot link with both PureCoverage and Quantify.' >&2
+        exit 1
+      fi
+      shift;;
+    -quantify)
+      rtquantify=1
+      if [ $rtpurify ] ; then
+        echo 'Cannot link with both Purify and Quantify.' >&2
+        exit 1
+      fi
+      shift;;
+    -verbose)
+      rtverbose=1
+      shift;;
+    -optimized|-default|-debug|-check) # our build process needs '-default'
+      case $arg in
+        -optimized)
+          lib_suffix=_o;;
+        -default|-debug|-check)
+          lib_suffix=_d;;
+      esac
+      case $RTARCH in
+        sun4_solaris|i86_solaris)
+          cc_flags_ol='-xO4';;
+        i86_linux|ia64_linux)
+          cc_flags_ol='-O3';;
+        *)
+          cc_flags_ol='-O';;
+      esac
+      shift;;
+    -cxx)
+      use_cxx=1
+      shift;;
+    -cpp)
+      use_cxx=1
+      use_cpp=1
+      shift;;
+    -64bit)
+      use_64bit=1
+      case $RTARCH in
+        hp700_hpux)
+          rtlib_64dir=pa20_64
+          ;;
+        ia64_hpux)
+          rtlib_64dir=hpux64
+          ;;
+        sun4_solaris)
+          rtlib_64dir=sparcv9
+          syslib_64dir=/usr/lib/sparcv9
+          [ -f $syslib_64dir/libc.so ] && cc_flags_bl='-xarch=v9'
+          ;;
+        i86_solaris)
+          rtlib_64dir=amd64
+          syslib_64dir=/usr/lib/amd64
+          [ -f $syslib_64dir/libc.so ] && cc_flags_bl='-xarch=generic64'
+          ;;
+        i86_linux)
+          rtlib_64dir=lib64
+          syslib_64dir=/usr/lib64
+          [ -f $syslib_64dir/libc.so ] && cc_flags_bl='-m64'
+          ;;
+        rs6000_aix)
+          rtlib_64dir=64bit
+          cc_flags='-q64'
+          ;;
+      esac
+      shift;;
+    -static_link|-static)
+      use_static_link=1
+      shift;;
+    -os_static_link)
+      use_os_static_link=1
+      use_static_link=1
+      shift;;
+    *)
+      ;;
+  esac
+done
+
+cc_flags="$cc_flags $cc_flags_ol $cc_flags_bl"
+
+# ----------------------------------------------------------------------
+# Allow the library suffix to be overridden with an env var
+# ----------------------------------------------------------------------
+[ "$RTLINKLIBSUFFIX" ] && lib_suffix=$RTLINKLIBSUFFIX
+
+# ----------------------------------------------------------------------
+# Reconcile most rtlink* scripts by allowing two extra env vars to
+# be set: RTLINKFIRSTLIB (for simple scripts like rtlinkarchive)
+# and RTLINKSKIPSDBLIB (for scripts like rtlinkserver).
+# ----------------------------------------------------------------------
+first_lib=
+if [ "$RTLINKFIRSTLIB" != "" ] ; then
+  # Allow multiple libs (for scripts like rtlinksecursrv).
+  for lib in $RTLINKFIRSTLIB ; do
+    first_lib="$first_lib ${lib}$lib_suffix" # tack on suffix
+  done
+fi
+
+sdb_lib=-lrtsdb$lib_suffix
+if [ -n "$RTLINKSKIPSDBLIB" -o ! -f $RTHOME/lib/$RTARCH/static/librtsdb.a ] ; then
+  sdb_lib=
+fi
+
+# Support optional IPC C++ Class library
+cxx_ipc_lib=
+if [ $use_cxx ] ; then
+  if [ $use_cpp ]; then
+    cxx_ipc_lib=-lrtsscpp50$lib_suffix
+  else
+    cxx_ipc_lib=-lrtcxxipc50$lib_suffix
+  fi
+fi
+[ "$RTLINKCXXIPCLIB" ] && cxx_ipc_lib=$RTLINKCXXIPCLIB
+
+rtlibs="$first_lib $sdb_lib $cxx_ipc_lib -lrtipc$lib_suffix -lrtmsg$lib_suffix -lrtsubj$lib_suffix -lrtconn$lib_suffix -lrtipcl$lib_suffix -lrtedm$lib_suffix -lrtutil$lib_suffix -lrtsm$lib_suffix"
+
+# Set a default compiler.
+if [ $use_cxx ] ; then
+  case $RTARCH in
+    alpha_osf)
+      cc=cxx;;
+    rs6000_aix)
+      cc=xlC_r;;
+    i86_linux)
+      cc=g++;;
+    ia64_linux)
+      cc=g++3;;
+    tandem_oss)
+      cc=c89
+      cc_flags="$cc_flags -Wversion3"
+      ;;
+    *)
+      cc=CC;;
+  esac
+else
+  case $RTARCH in
+    rs6000_aix)
+      cc=cc_r;;
+    tandem_oss)
+      cc=c89;;
+    *)
+      cc=cc;;
+  esac
+fi
+# Let user override our default.
+[ "$CC" ] && cc="$CC"
+
+# Try to handle gcc, too.
+echo $cc | grep gcc > /dev/null 2>&1 ; gcconpath=$?
+echo $cc | grep g++ > /dev/null 2>&1 ; gpponpath=$?
+if [ $gcconpath -eq 0 -o $gpponpath -eq 0 ]; then
+  rtgcc=1
+fi
+
+# Check for /usr/ucb/cc on SVR4.
+if [ $RTARCH = sun4_solaris -o $RTARCH = i86_solaris ] ; then
+  echo $cc | grep ucb > /dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    echo "rtlink does not support the ucb $cc compiler." >&2
+    exit 1
+  fi
+  # check each arg for libucb. or -lucb
+  for arg in "$@" ; do
+    echo $arg | egrep 'libucb.|ucblib|-lucb' > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      echo "rtlink does not support the ucb $arg library." >&2
+      exit 1
+    fi
+  done
+  # check $path if cc is in /usr/ucb [ just use "which" instead? ]
+  if [ "$cc" = cc ]; then
+    parts=`echo $PATH | sed 's,:, ,g'`;
+    for dir in $parts ; do
+      if [ -x $dir/cc -a ! -d $dir/cc ]; then
+        if [ $dir = /usr/ucb ]; then
+          echo "rtlink does not support the /usr/ucb/cc compiler." >&2
+          exit 1
+        else
+          # found non-ucb cc, so quit search
+          break # foreach
+        fi
+      fi
+    done
+  fi
+fi
+
+# ----------------------------------------------------------------------
+# Add appropriate flags for -os_static_link.  On many systems these flags
+# need to be early in the command line because they are positional and
+# can be used several times to turn on and off static linking of some
+# libraries.  We don't support that level of control (but we could with
+# something like -os_static_link -lfoo -no_os_static_link -lbar).
+# ----------------------------------------------------------------------
+os_static=
+if [ $use_os_static_link ] ; then
+  if [ $rtgcc ] ; then
+    os_static="-static"
+  else case $RTARCH in
+    sun4_solaris|i86_solaris)
+      os_static="-Bstatic";;
+    hp700_hpux|ia64_hpux)
+      os_static="-Wl,-a,archive";;
+    iris_irix)
+      os_static="-Wl,-B,static";;
+    alpha_osf)
+      os_static="-non_shared";;
+    rs6000_aix)
+      os_static=;;
+    *)
+      echo "WARNING: Unknown platform $RTARCH for -os_static_link." >&2
+      ;;
+  esac ; fi
+  cc_flags="$cc_flags $os_static"
+fi
+
+# Set up library search path.
+lib_suffix=
+if [ $use_64bit ] ; then
+  case $RTARCH in
+    hp700_hpux|ia64_hpux|rs6000_aix)
+      lib_suffix=/$rtlib_64dir;;
+    sun4_solaris|i86_solaris|i86_linux)
+      [ -f $syslib_64dir/libc.so ] && lib_suffix=/$rtlib_64dir;;
+  esac
+  if [ $lib_suffix ]; then
+    [ $use_static_link ] && lib_suffix=64
+  else
+    case $RTARCH in
+      ia64_linux|alpha_osf)
+        echo "NOTE: This platform is already 64-bit!" >&2
+        ;;
+      *)
+        echo "64-bit not supported on this platform." >&2
+        ;;
+    esac
+  fi
+fi
+if [ $use_static_link ] ; then
+  lib_include="-L$RTHOME/lib/$RTARCH/static$lib_suffix"
+else
+  lib_include="-L$RTHOME/lib/$RTARCH$lib_suffix"
+fi
+
+case $RTARCH in
+  tandem_oss)
+    # Force Tandem OSS to use the -WIEEE_float compiler parameter.
+    cc_flags="$cc_flags -WIEEE_float -Wextensions"
+    [ -z "$use_static_link" ] && cc_flags="$cc_flags -Wcall_shared";;
+  rs6000_aix)
+    cc_flags="$cc_flags -bD:0x80000000";;
+esac
+
+[ $rtpurify ]   && cc="purify   $cc"
+[ $rtpurelink ] && cc="purelink $cc"
+[ $rtpurecov ]  && cc="purecov  $cc"
+[ $rtquantify ] && cc="quantify $cc"
+
+rtsyslibs="$rtsyslib $RTLINKSYSLIB"
+case $RTARCH in
+  sun4_solaris|i86_solaris)
+    if [ $use_64bit ]; then
+      dummy="-L$syslib_64dir $RTHOME/lib/$RTARCH/$rtlib_64dir/utdummy.o"
+    else
+      dummy="$RTHOME/lib/$RTARCH/utdummy.o"
+    fi
+    if [ $rtgcc ] ; then
+      rtsyslibs="$rtsyslibs $dummy -lsocket -lnsl -lthread"
+    else
+      rtsyslibs="-Bdynamic $rtsyslibs $dummy -lsocket -lnsl -ldl -lw -lthread"
+    fi
+    ;;
+  alpha_osf)
+    rtsyslibs="$rtsyslibs -DT_OS_ALPHA_OSF_40 -DX11R6"
+    [ $use_cpp ] || rtsyslibs="$rtsyslibs -D_POSIX_PII"
+    rtsyslibs="$rtsyslibs -DT_POSIX_FINAL_THREADS -std1 -pthread"
+    ;;
+  hp700_hpux|ia64_hpux)
+    rtsyslibs="$rtsyslibs -Wl,+s"
+    [ $use_64bit ] || rtsyslibs="$rtsyslibs -N"
+    if [ $use_cxx ] ; then
+      [ $use_64bit ] || rtsyslibs="$rtsyslibs -Aa"
+    else
+      rtsyslibs="$rtsyslibs -Ae"
+      if [ $use_64bit ] ; then
+        rtsyslibs="$rtsyslibs +DD64 $RTHOME/lib/$RTARCH/$rtlib_64dir/utdummy.o"
+      else
+        rtsyslibs="$rtsyslibs $RTHOME/lib/$RTARCH/utdummy.o"
+      fi
+    fi
+    rtsyslibs="$rtsyslibs -lpthread"
+    if [ $RTARCH = hp700_hpux ] ; then
+      if [ -z "$use_64bit" ]; then
+        rtsyslibs="$rtsyslibs +DAportable"
+      elif [ $use_cxx ] ; then
+        rtsyslibs="$rtsyslibs +DA2.0W"
+      fi
+    fi
+    ;;
+  iris_irix)
+    if [ "$RTTANDEM" ] ; then
+      rtsyslibs="$rtsyslibs -lsocket -lnsl"
+    else
+       rtsyslibs="$rtsyslibs $RTHOME/lib/$RTARCH/utdummy.o"
+    fi
+    ;;
+  i86_linux|ia64_linux)
+    rtsyslibs="$rtsyslibs -lpthread -ldl"
+    ;;
+esac
+
+# ----------------------------------------------------------------------
+# Allow the last libraries (defaults to math lib) to be overridden with
+# an env var.
+# ----------------------------------------------------------------------
+case $RTARCH in
+  iris_irix|hp700_hpux|ia64_hpux)
+    last_libs="-lm -lpthread";;
+  rs6000_aix)
+    # last_libs="-lm -lpthreads" # rs6000 4.1 complains on -lm! 05/30/00 TL
+    last_libs="-lpthreads";;
+  tandem_oss)
+    last_libs="-lm -lzsptsrl";;
+  *)
+    last_libs="-lm";;
+esac
+[ "$RTLINKLASTLIBS" ] && last_libs="$RTLINKLASTLIBS"
+
+cmd_pre="$cc $cc_flags -DT_${RTARCH_UC}"
+cmd_post="-I$RTHOME/include/$RTARCH $lib_include $rtlibs $rtsyslibs $last_libs"
+
+if [ $rtecho ] ; then
+  echo $cmd_pre "$@" $cmd_post
+  exit 0
+elif [ $rtverbose ] ; then
+  echo $cmd_pre "$@" $cmd_post
+fi
+
+$cmd_pre "$@" $cmd_post
+exit $?

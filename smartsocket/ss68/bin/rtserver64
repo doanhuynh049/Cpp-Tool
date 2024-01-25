@@ -1,0 +1,133 @@
+:
+
+#
+# Copyright (c) 1991-2006 TIBCO Software Inc.
+# All rights reserved.
+# For more information, please contact:
+# TIBCO Software Inc., Palo Alto, California, USA
+#
+# $Id: //dev/packages/tdf/server/dev/68/src/server/scripts/rtserver64.sh#2 $
+#
+
+USET=0
+echo $- | grep u > /dev/null
+if [ $? -ne 1 ]; then
+  USET=1
+  set +u
+fi
+
+#set -x
+if [ $RTVERBOSE ] ; then
+  set -x
+fi
+
+# ----------------------------------------------------------
+# Strip out the special flags:
+#   -check - use the default(i.e assert/expects on) version of the executable
+#   -optimized - use the optimized version of the executable
+# ----------------------------------------------------------
+for arg in $* ; do
+  case $arg in
+  -check)
+    exetype="_d"
+    ;;
+  -optimized)
+    exetype="_o"
+    ;;
+  *)
+    ;;
+  esac
+done
+
+# ----------------------------------------------------------------------
+# If $RTHOME or $RTARCH is not set, then punt.  The rtinit script is
+# no longer optional.
+# ----------------------------------------------------------------------
+if [ "$RTHOME" = "" -o "$RTARCH" = "" ] ; then
+  echo 'The RTworks environment has not been initialized.'
+  echo 'Please change directory to the main RTworks directory.'
+  echo 'If you are running the C shell (usually ), type'
+  echo '      "source bin/rtinit.csh"'
+  echo 'If you are running the Bourne shell (usually /bin/sh), type'
+  echo '       ". bin/rtinit.sh"'
+  echo 'in response to the prompt to initialize the RTworks environment.'
+  exit 1
+fi
+
+# ----------------------------------------------------------------------
+# Figure out what program to run based on $0.
+# ----------------------------------------------------------------------
+fullname=$0
+basename=`echo $fullname | sed -e 's,^.*/,,'`
+
+# ----------------------------------------------------------------------
+# Should we blow off the full path and find the executable from $PATH?
+# Probably not!  SMW 11/8/91
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# If the environment variable RTPURIFYTEST is set, then run the Purify
+# executable (if it exists).  This will only work internally at Talarian.
+# SMW 12/9/92
+# ----------------------------------------------------------------------
+if [ "$RTPURIFYTEST" != "" -a -x $RTHOME/bin/$RTARCH/purify_$basename.x ]; then
+  # Use $PATH so we can use $HOME/bin/$RTARCH executables too.  SMW 01/27/95
+  cmd_name=purify_$basename.x
+fi
+
+# ----------------------------------------------------------------------
+# If the environment variable RTQUANTIFYTEST is set, then run the Quantify
+# executable (if it exists).  This will only work internally at Talarian.
+# BM 02/07/2000
+# ----------------------------------------------------------------------
+if [ "$RTQUANTIFYTEST" != "" -a -x $RTHOME/bin/$RTARCH/quantify_$basename.x ]; then
+  # Use $PATH so we can use $HOME/bin/$RTARCH executables too. BM 02/07/2000
+  cmd_name=quantify_$basename.x
+fi
+
+
+if [ "$RTPURECOVTEST" != "" -a -x $RTHOME/bin/$RTARCH/purecov_$basename.x ]; then
+  # Use $PATH so we can use $HOME/bin/$RTARCH executables too.  SMW 01/27/95
+  cmd_name=purecov_$basename.x
+fi
+
+# ----------------------------------------------------------------------
+# If the environment variable RTXRUNNERTEST is set, then run the XRunner
+# executable (if it exists).  This will only work internally at Talarian.
+# DCG 7/7/94
+# ----------------------------------------------------------------------
+if [ "$RTXRUNNERTEST" != "" -a -x $RTHOME/bin/$RTARCH/xrunner_$basename.x ]; then
+  # Use $PATH so we can use $HOME/bin/$RTARCH executables too.  SMW 01/27/95
+  cmd_name=xrunner_$basename.x
+fi
+
+# ----------------------------------------------------------------------
+# If no command has been set and if the environment variable
+# RTDEV_SHELL is set, then use $PATH to find the executable instead
+# of using the $RTHOME executable.
+# This will only work internally at Talarian.  SMW 02/09/95
+# ----------------------------------------------------------------------
+if [ "$cmd_name" = "" ] ; then
+  if [ "$RTDEV_SHELL" != "" ] ; then
+    # Use $PATH so we can use $HOME/bin/$RTARCH executables too.  SMW 02/09/95
+    admin_name=rtadmin.x
+    cmd_name=$basename$exetype.x
+  else
+    admin_name=$RTHOME/bin/$RTARCH/rtadmin.x
+    cmd_name=$RTHOME/bin/$RTARCH/$basename$exetype.x
+  fi
+fi
+
+# ----------------------------------------------------------------------
+# If there are no parameters, most Bourne shells interpret "$@" as a
+# NULL.  Some versions (QNX and Digital Unix) interpret it as the empty
+# string, "".  When the empty string is passed to a program it counts as
+# an argument in argv/argc and must be handled.  I would rather handle
+# it here than in each of our main programs.  BMQ 04/17/97
+# ----------------------------------------------------------------------
+cmd_args="$@"
+if [ -z "$cmd_args" ] ; then
+  exec $admin_name $cmd_name
+else
+  exec $admin_name $cmd_name "$@"
+fi

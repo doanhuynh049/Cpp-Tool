@@ -1,0 +1,75 @@
+:
+
+#
+# Copyright (c) 1991-2006 TIBCO Software Inc.
+# All rights reserved.
+# For more information, please contact:
+# TIBCO Software Inc., Palo Alto, California, USA
+#
+# $Id: //dev/packages/build/dev/68/src/scripts/rtrsh.sh#1 $
+#
+
+# /* ------------------------------------------------------------- */
+
+# rtrsh.csh -- run rsh (or remsh on HP-UX)
+
+if [ $RTVERBOSE ]; then
+  set -x
+fi
+
+# ----------------------------------------------------------------------
+# On HP-UX, rsh is the restricted shell, not the remote shell.
+# ----------------------------------------------------------------------
+os_type=`rtarch -os_type`
+if [ $os_type = hpux ]; then
+  rem_sh=remsh
+else
+  rem_sh=rsh
+fi
+
+# ----------------------------------------------------------------------
+# If the remote shell is ksh, run the .profile first.
+# ----------------------------------------------------------------------
+
+node=""
+rtrsh_args=""
+
+for arg in $* ; do
+  case $arg in
+  -l)
+    shift
+    rtrsh_args="$rtrsh_args -l $1"
+    shift
+    ;;
+  -n)
+    shift
+    rtrsh_args="$rtrsh_args -n"
+    ;;
+  *)
+    if [ "$node" = "" ]; then
+      node=$1
+      rtrsh_args="$rtrsh_args $node"
+      shift
+    fi 
+    ;;
+  esac
+done
+
+if [ "$RT_REMOTE_SHELL" != "" ]; then
+  shell_path=$RT_REMOTE_SHELL
+else
+  # redirect stdin in order to not "use it up" yet.
+  shell_path=`$rem_sh $node 'echo $SHELL' < /dev/null`
+fi
+
+shell_name=`echo $shell_path | sed -e 's,^.*/,,'`
+if [ "$shell_name" = "ksh" -o "$shell_name" = "sh" ]; then
+  if [ $# -eq 0 ]; then
+    exec $rem_sh $rtrsh_args
+  else
+    #echo $rem_sh $rtrsh_args ". ./.profile; $@"
+    exec $rem_sh $rtrsh_args ". ./.profile; $@"
+  fi
+else
+  exec $rem_sh $rtrsh_args "$@"
+fi 

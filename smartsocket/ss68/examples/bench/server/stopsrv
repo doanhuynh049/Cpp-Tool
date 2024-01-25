@@ -1,0 +1,24 @@
+:
+
+#
+# Copyright (c) 1991-2004 TIBCO Software Inc.
+# All rights reserved.
+# For more information, please contact:
+# TIBCO Software Inc., Palo Alto, California, USA
+#
+# $Id: //dev/packages/examples/ss/dev/68/src/bench/server/stopsrv#1 $
+#
+
+# stop_rtserver -- stop benchmark RTserver
+
+#set echo
+if [ $RTVERBOSE ] ; then
+  set -x
+fi
+
+# Use a remote RTserver if BENCH_SERVER_NODE is set.  SMW 11/19/94
+if [ $BENCH_SERVER_NODE ] ; then
+  rtserver -server_names $BENCH_SERVER_NODE -stop_clients > rtstopsrv.out
+else
+  rtserver -stop_clients > rtstopsrv.out
+fi

@@ -1,0 +1,148 @@
+:
+
+#
+# Copyright (c) 1991-2006 TIBCO Software Inc.
+# All rights reserved.
+# For more information, please contact:
+# TIBCO Software Inc., Palo Alto, California, USA
+#
+# $Id: //dev/packages/build/dev/68/src/scripts/subs.sh#1 $
+#
+
+# subs -- make substitutions
+
+# ----------------------------------------------------------------------
+# Talarian Corporation		If you encounter any difficulties with 
+# 333 Distel Circle		this script, contact Talarian Tech
+# Los Altos, CA 94022		Support.
+# (650) 965-8050		E-mail: support@talarian.com
+# ----------------------------------------------------------------------
+
+if [ $RTVERBOSE ]; then
+  set -x
+fi
+
+# --------------------------------------------
+# /dev/null on Windows and OS/2 is called nul or nul:
+# --------------------------------------------
+if [ $RTARCH = "i86_w32" -o $RTARCH = "i86_w16" ]; then
+  nullfile="nul:"
+elif [ $RTARCH = i86_os2 ]; then
+  nullfile="nul"
+else
+  nullfile="/dev/null"  # UNIX
+fi
+
+grep="grep -l -e"
+if [ $RTARCH = iris_irix_4_0_1 -o $RTARCH = iris_irix -o $RTARCH = sun4_solaris -o $RTARCH = m88k_sys5 -o $RTARCH = m88k_cxux -o $RTARCH = i86_solaris -o $RTARCH = att_sysv -o $RTARCH = pyramid_dcosx -o $RTARCH = sequent_dynix ]; then
+  grep="grep -l"
+fi
+
+if [ $# -lt 3 -o "$1" = "-help" ]; then
+  echo Usage: subs original substitution \[files...\]
+  echo Example: subs foo bar file1.c file2.c file3.c
+  echo Usage: subs -f sed_file \[files...\]
+  echo Example: subs -f changes.sed file1.c file2.c file3.c
+  exit 1
+fi
+
+#echo "searching files for $1"
+tf=/tmp/sb$$.tmp
+
+# If -f sedfile is specified, then only run sed once.  SMW 04/07/97
+if [ "$1" = "-f" ]; then
+  has_sed_file=1
+  sed_file="$2"
+else
+  oldstr="$1"
+  newstr="$2"
+fi
+
+# now remove first two parameters
+shift;shift
+if [ $has_sed_file ]; then
+  files="$*"
+else
+  files=`$grep "$oldstr" $*` 
+fi
+
+# this script uses sed to make the substitution.  It only makes the
+# substition on the files that need changing.
+for fname in $files
+do
+
+  # If there is an RCS file, then try to check it out.
+  # Do not overwrite any existing files
+  if [ -f RCS/$fname,v  -a ! -w $fname ]; then
+    echo "checking out $fname"
+    echo "n" | co -l $fname > /tmp/co$$.tmp 2>&1
+    if [ $? -ne 0 ]; then
+      echo "co failed."
+      cat /tmp/co$$.tmp
+      continue
+    fi
+    has_rcs_file=1
+  fi
+  echo "changing $fname"
+
+  # Save the protection of the file, and make a half-hearted effort to
+  # preserve it.  Mostly we are interested in preserving the execution
+  # bit.  This is a gross, but useful, hack.
+  unset needs_chmod_x
+  if [ "`ls -l $fname | awk '{print $1}' | grep x`" != "" ]; then
+    needs_chmod_x=1
+  fi
+
+  if [ $has_sed_file ]; then
+    sed -f $sed_file $fname > $tf
+  else
+    # Make sure we do not use a delimiter that is in one of the strings.
+    echo "$oldstr $newstr" | fgrep Z > $nullfile
+    if [ $? -ne 0 ]; then
+      sed sZ"$oldstr"Z"$newstr"Zg $fname > $tf
+    else
+      echo "$oldstr $newstr" | fgrep \^ > $nullfile
+      if [ $? -ne 0 ]; then
+        sed s\^"$oldstr"\^"$newstr"\^g $fname > $tf
+      else
+        echo "$oldstr $newstr" | fgrep @ > $nullfile
+        if [ $? -ne 0 ]; then
+          sed s@"$oldstr"@"$newstr"@g $fname > $tf
+        else
+          echo "$0: Cannot handle all of Z, ^, and @ in strings."
+          exit 1
+        fi
+      fi
+    fi
+  fi
+
+  # Can't use ~ on FAT on OS/2.  SMW 01/22/97 
+  if [ $RTARCH != i86_os2 ]; then
+    rm -f $fname~ # remove backup file
+    mv -f $fname $fname~ # create new backup file
+  fi
+
+  # this line causes a benign "not owner" message on OSF/1, but it could be
+  # related to using manual mounts instead of automount.  SMW 08/23/94
+  #
+  # We get a similar "permission denied" message with Samba on NT 4.0,
+  # and the mv fails, so use two steps.  SMW 01/14/97
+  if [ $RTARCH = alpha_osf -o $RTARCH = i86_w32 -o $RTARCH = os390_mvsoe ]; then
+    cp -f $tf $fname
+    rm -f $tf
+  else
+    mv -f $tf $fname
+  fi
+  # add back the execution bit.
+  if [ $needs_chmod_x ]; then
+    chmod +x $fname
+  fi
+  if [ $has_rcs_file ]; then
+    unset has_rcs_file
+    echo "checking in $fname"
+    echo "Used subs to change $oldstr to $newstr" | ci -u $fname > $nullfile 2>&1
+   fi
+  #echo done
+
+done
+exit 0

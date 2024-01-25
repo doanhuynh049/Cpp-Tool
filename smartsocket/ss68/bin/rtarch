@@ -1,0 +1,359 @@
+:
+
+#
+# Copyright (c) 1991-2006 TIBCO Software Inc.
+# All rights reserved.
+# For more information, please contact:
+# TIBCO Software Inc., Palo Alto, California, USA
+#
+# $Id: //dev/packages/build/dev/68/src/scripts/rtarch.sh#1 $
+#
+
+# rtarch.csh -- calculate RTworks architecture
+
+#set echo
+if [ $RTVERBOSE ] ; then
+  set -x
+fi
+
+#################################################################
+# This script no longer sets any environment variables.
+# Usage:
+#  rtarch -machine_type         # echo machine (hardware) type
+#  rtarch -os_type          # echo OS (software) type
+#  rtarch -os_version           # echo OS (software) version
+#  rtarch               # echo all three
+#  rtarch -os_old_version       # echo OS old version number
+#  rtarch -os_integer                   # echo OS version as big integer
+#  rtarch -os_minimum                   # echo minimum OS version as integer
+#  rtarch -sub_arch         # sub-arch (e.g., ABI port)
+#  rtarch -arch_list            # get list of architectures
+#################################################################
+
+#################################################################
+# This script no longer tries to determine old, nonsupported
+# architectures correctly (such as IRIX 3.3).  It instead just
+# sets $RTARCH to one version too old to run the current version
+# of RTworks (e.g., IRIX 3.3 will appear to be 4.0.1).  This
+# will keep this script small, fast, and easy to maintain.
+# SMW 04/05/94
+#
+# For SS 4.0, Talarian is going to support only HP-UX 10.x and AIX 4.x,
+# but a source code customer wants to still support HP-UX 9.X and
+# AIX 3.X.  Thus add an os_old_version to the Talarian RTARCH for
+# the older OSes.  SMW 11/06/96
+#################################################################
+os_old_version=""
+
+# Sun seems to use /bin/sun to imply SPARC now.  SMW 02/15/96
+#if (-e /bin/sun && { /bin/sun }) then # Sun
+
+# Support for Unix-on-Windows (but only supported internally; no official
+# support for customers yet.
+case `uname` in
+	CYGWIN*|Interix*)
+		# fancy flags not supported
+		echo i86_w32
+		exit 0
+		;;
+esac
+
+# i86 Solaris Bourne shell does not support executing a program and
+# checking its return status so we do it in two steps here. BMQ 05/27/97
+# if [ -f /bin/sparc -a /bin/sparc ] ; then # SunSPARC
+if [ -x /bin/sparc ] ; then
+  /bin/sparc
+  sh_stat=$?
+else
+  sh_stat=1
+fi
+if [ $sh_stat -eq 0 ] ; then # SunSPARC
+  if [ -d /proc ] ; then    # Solaris 2.x (aka SunOS5.x)
+    os_type=solaris
+    # Solaris 2.5 doesn't have /usr/kvm/arch (see bug 4122).  SMW 02/15/96
+    #machine_type=`/usr/kvm/arch`
+    machine_type=sun4
+    os_minimum=540
+    # Solaris 2.4 is our minimum now.  SMW 08/31/95
+    _os_major=`uname -r | awk -F. '{print $1}'`
+    _os_minor=`uname -r | awk -F. '{print $2}'`
+    os_integer=`expr $_os_major \* 100 + $_os_minor \* 10`
+    if [ $os_integer -le 540 ]; then
+      os_version=5_4
+      os_integer=540
+    else
+      os_version=${_os_major}_${_os_minor}
+    fi
+    unset _os_major
+    unset _os_minor
+  else # Solaris 1.x (aka SunOS 4.1.y)
+    os_type=sunos
+    machine_type=`/bin/arch`
+    os_minimum=411
+    # New check to distinguish between 4.1 and 4.1.1.
+    if [ -x /usr/etc/showrev ]; then
+      os_version=4_1_1
+      os_integer=411
+    else
+      os_version=4_1
+      os_integer=410
+    fi
+  fi
+elif [ -r /ultrixboot ]; then
+  os_type=ultrix
+  os_minimum=400
+  if [ -r /usr/include/mips ]; then
+    machine_type=ds # DECstation
+  else
+    machine_type=vs # VAXstation (should be SLUGstation!)
+  fi
+  #if [ -f /usr/etc/automount ] ; then  # Nope: not all Ultrix boxes haveit
+  if [ -f /etc/svc.conf ] ; then    # try this (Saber C checks for this,too)
+    os_version=4_0
+    os_integer=400
+  else
+    os_version=3_0
+    os_integer=300
+  fi
+elif [ -x /bin/4d -a /bin/4d ]; then
+  machine_type=iris
+  os_type=irix
+  os_minimum=530
+  # Get the OS version.
+  # IRIX 5.3 is our minimum now.  SMW 10/26/95
+  _os_major=`uname -r | awk -F. '{print $1}'`
+  _os_minor=`uname -r | awk -F. '{print $2}'`
+  os_integer=`expr $_os_major \* 100 + $_os_minor \* 10`
+  os_version=${_os_major}_${_os_minor}
+  unset _os_major
+elif [ -x /bin/hp-pa -a /bin/hp-pa ]; then
+  os_type=hpux
+  os_minimum=900
+  if [ `/usr/bin/uname -m` = "ia64" ]; then
+    machine_type=ia64
+  elif [ -x /bin/hp9000s700 -a /bin/hp9000s700 -o -x /bin/hp9000s800 -a /bin/hp9000s800 ]; then
+    machine_type=hp700
+  else
+    machine_type=hp300
+  fi
+  # Get the OS version.
+  # Try to work on anything greater than 9.x.  SMW 12/29/95
+  _os_major=`uname -r | awk -F. '{print $2}'`
+  if [ $_os_major -ge 11 ]; then
+    os_version=11_0
+    os_integer=1100
+  elif [ $_os_major -ge 10 ]; then
+    os_version=10_0
+    os_integer=1000
+  else
+    os_version=9_0
+    os_integer=900
+    os_old_version=9
+  fi
+  unset _os_major
+elif [ -x /bin/uname -a "`/bin/uname`" = "OS/390" ]; then
+  machine_type=os390
+  os_type=mvsoe
+  os_minimum=0
+  os_version=0
+  os_integer=0
+elif [ -d /usr/lpp ]; then
+  machine_type=rs6000
+  os_type=aix
+  os_minimum=410
+  # Get the OS version.
+  # Try to work on anything greater than 4.x.  SMW 05/09/96
+  if [ `uname -v` -ge 5 ]; then
+    os_version=5_1
+    os_integer=510
+  elif [ `uname -v` -ge 4 ]; then
+    os_version=4_1
+    os_integer=410
+  else
+    # We need to use threads on AIX 4, so use a different $RTARCH on AIX 3.
+    # SMW 10/27/96
+    os_old_version=3
+    os_version=3_2
+    os_integer=320
+  fi
+elif [ -r /osf_boot ]; then
+  os_type=osf
+  # We have only ported to Alpha so far.  SMW 8/16/93
+  machine_type=alpha
+  os_minimum=200
+  os_version=2_0
+  os_integer=200
+  _os_major=`uname -r | awk -F. '{print $1}'`
+  _os_minor=`uname -r | awk -F. '{print $2}'`
+  if [ $_os_major = "V5" ]; then
+    os_integer=`expr 500 + $_os_minor \* 10`
+    os_version=5_$_os_minor
+  elif [ $_os_major = "V4" ]; then
+    os_integer=`expr 400 + $_os_minor \* 10`
+    os_version=4_$_os_minor
+  fi
+  unset _os_major
+  unset _os_minor
+# Avoid /bin/m88k on Harris NightHawk (CX/UX), as it might run with csh
+# and reload .cshrc, which will recurse out of control!  SMW 11/10/94
+elif [ -x /bin/uname -a `/bin/uname -s` = "CX/UX" ]; then
+  machine_type=m88k
+  os_type=cxux
+  os_minimum=710
+  os_version=7_1
+  os_integer=710
+elif [ -x /bin/m88k -a /bin/m88k -a `/bin/uname` = "dgux" ]; then
+  machine_type=m88k
+  os_type=dgux
+  os_minimum=400
+  os_version=4_0
+  os_integer=400
+elif [ -x /bin/m88k -a /bin/m88k ]; then
+  machine_type=m88k
+  os_type=sys5
+  os_minimum=400
+  os_version=4_0
+  os_integer=400
+elif [ -x /bin/i86pc -a /bin/i86pc ]; then
+  machine_type=i86
+  os_type=solaris
+  # Solaris 2.4 is our minimum.  SMW 08/31/95
+  _os_major=`uname -r | awk -F. '{print $1}'`
+  _os_minor=`uname -r | awk -F. '{print $2}'`
+  os_minimum=540
+  os_integer=`expr $_os_major \* 100 + $_os_minor \* 10`
+  if [ $os_integer -le 540 ]; then
+    os_version=5_4
+    os_integer=540
+  else
+    os_version=${_os_major}_${_os_minor}
+  fi
+  unset _os_major
+  unset _os_minor
+elif [ -x /bin/mips -a /bin/mips -a `uname -m` = S300 ]; then
+  # Tandem: MIPS ABI
+  machine_type=iris
+  os_type=irix
+  os_minimum=520
+  os_version=5_2
+  os_integer=520
+  sub_arch=tandem
+elif [ -r /usr/lib/libseq.a ]; then
+  case `uname -v` in
+  V2*)
+    machine_type=sequent
+    os_type=dynix
+    os_minimum=201
+    os_version=2_0
+    os_integer=201
+    ;;
+  V4*)
+    machine_type=sequent
+    os_type=dynix
+    os_minimum=401
+    os_version=4_0
+    os_integer=401
+    ;;
+  *)
+    machine_type=unknown
+    os_type=unknown
+    os_version=unknown
+    os_integer=0
+    os_minimum=1 # hack to get rtinstall to fail
+    ;;
+  esac
+elif [ -x /bin/uname -a "`/bin/uname -v`" = "dcosx" ]; then
+  machine_type=pyramid
+  os_type=dcosx
+  os_minimum=110
+  os_version=1_1
+  os_integer=110
+elif [ -x /bin/uname -a "`/bin/uname`" = "Linux" ]; then
+  if [ "`/bin/uname -m`" = "ia64" ] ; then
+    machine_type=ia64
+  else
+    machine_type=i86
+  fi
+  os_type=linux
+  os_minimum=200
+  os_version=2_0
+  os_integer=200
+elif [ -x /bin/uname -a "`/bin/uname`" = NONSTOP_KERNEL ]; then
+  # Have to put OSS before uname -p because OSS uname does not
+  # have -p.  SMW VT 09/04/97
+  machine_type=tandem
+  os_type=oss
+  os_minimum=0
+  os_version=0
+  os_integer=0
+elif [ -x /bin/uname -a "`/bin/uname -p`" = "386/486/MC" ]; then
+  machine_type=att
+  os_type=sysv
+  os_minimum=100
+  os_version=5_4
+  os_integer=540
+elif [ -x /usr/bin/uname -a "`/usr/bin/uname -s`" = "UnixWare" ]; then
+  machine_type=i86
+  os_type=sco
+  os_version=7_1_0
+  os_integer=710
+  os_minimum=710
+elif [ -x /usr/bin/uname ]; then
+  # Have to do in 2 steps for OSS.  SMW VT 09/04/97
+  if [ "`/usr/bin/uname -s`" = "QNX" ]; then
+    machine_type=i86
+    os_type=qnx
+    os_version=4_2_3
+    os_integer=423
+    os_minimum=423
+  fi
+else
+  machine_type=unknown
+  os_type=unknown
+  os_version=unknown
+  os_integer=0
+  os_minimum=1 # hack to get rtinstall to fail
+fi
+
+# Now that we've figured out what kind of hardware/software we have, echo
+# it.
+
+# Handle the most common case first.
+if [ $# = 0 ]; then
+  # Change to use "_" instead of "." (SPEC SMW-003).  SMW 7/8/92
+  # Change to not have OS version in it.  SMW 08/31/95
+  echo ${machine_type}_${os_type}${os_old_version}
+  exit 0
+elif [ "$1" = "-machine_type" ]; then
+  echo $machine_type
+elif [ "$1" = "-os_type" ]; then
+  echo $os_type
+elif [ "$1" = "-os_version" ]; then
+  echo $os_version
+elif [ "$1" = "-os_old_version" ]; then
+  echo $os_old_version
+elif [ "$1" = "-os_integer" ]; then
+  echo $os_integer
+elif [ "$1" = "-os_minimum" ]; then
+  echo $os_minimum
+elif [ "$1" = "-arch_list" ]; then
+  # If you change this, change rtarch.com too.  SMW 04/04/94
+  if [ "$PT_KIT" != "" ] ; then
+    echo "alpha_osf alpha_vms att_sysv hp700_hpux i86_linux i86_solaris i86_w32 iris_irix m88k_dgux pyramid_dcosx rs6000_aix sequent_dynix sun4_sunos sun4_solaris vax_vms"
+  else
+    echo "alpha_osf alpha_vms hp700_hpux i86_qnx i86_linux i86_solaris i86_w32 iris_irix m88k_sys5 rs6000_aix sun4_sunos sun4_solaris vax_vms"
+  fi
+elif [ "$1" = "-sub_arch" ]; then
+  if [ "$sub_arch" != "" ] ; then
+    echo $sub_arch
+  else
+    echo ""
+  fi
+else
+  # Bad argument, but blow it off.
+  # Change to use "_" instead of "." (SPEC SMW-003).  SMW 7/8/92
+  # Change to not have OS version in it.  SMW 08/31/95
+  echo ${machine_type}_${os_type}
+fi
+
+exit 0

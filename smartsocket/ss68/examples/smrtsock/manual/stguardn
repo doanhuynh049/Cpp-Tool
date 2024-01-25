@@ -1,0 +1,15 @@
+#! /bin/csh -f
+
+# prime the system by starting the receivers
+./startpcl & 
+./startbcl & 
+sleep 5
+
+if ($?DISPLAY) then
+  xterm -geometry -20+20 -T "Sender" -e ./udsend.x &
+  xterm -geometry +20+20 -T "Guardian" -e ./guardian.x user_manual
+else
+  ./udsend.x &
+  ./guardian.x user_manual
+endif
+

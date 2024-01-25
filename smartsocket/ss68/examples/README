@@ -1,0 +1,26 @@
+/*
+ * Copyright (c) 1991-2006 TIBCO Software Inc.
+ * All rights reserved.
+ * For more information, please contact:
+ * TIBCO Software Inc., Palo Alto, California, USA
+ *
+ * $Id: //dev/packages/examples/ss/dev/68/src/README#1 $
+ */
+
+This directory contains the following SmartSockets examples:
+
+1.  bench           - C code for producing SmartSockets benchmarks
+
+2.  cxxipc              - SmartSockets C++ Class Library source code
+
+3.  smrtsock            - SmartSockets sample code, manual examples and
+              tutorials
+
+4.  Java        - SmartSockets Java sample code and examples
+
+5.  Microsoft.NET       - SmartSockets .NET examples
+            - vb7\sschat - a VB 7.0 chat application
+            - vb7\whowhere - a VB 7.0 Message Board application
+
+6.  sscpp       - SmartSockets SSCpp C++ Class Library examples
+

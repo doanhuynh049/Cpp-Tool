@@ -1,0 +1,52 @@
+:
+
+#
+# Copyright (c) 1991-2004 TIBCO Software Inc.
+# All rights reserved.
+# For more information, please contact:
+# TIBCO Software Inc., Palo Alto, California, USA
+#
+# $Id: //dev/packages/examples/ss/dev/68/src/bench/server/startsrv#1 $
+#
+
+# start_rtserver -- start benchmark RTserver
+
+# Set echo
+if [ $RTVERBOSE ] ; then
+  set -x
+fi
+
+# Get the number of threads
+num_rtserver_threads=$BENCH_NUM_SERVER_THREADS
+
+# Get 64-bit option
+b=
+[ $BENCH_SERVER_64BIT ] && b=64
+
+# Use a remote RTserver if BENCH_SERVER_NODE is set.  SMW 11/19/94
+if [ $BENCH_SERVER_NODE ] ; then
+  # Getting the directory right can be tricky, so allow it to be set.
+  if [ $BENCH_DIR ] ; then
+    bench_dir="$BENCH_DIR"
+  else
+    # Try to support UNIX<-->VMS too.  SMW 11/20/94
+    if [ $BENCH_SERVER_VMS ] ; then
+      bench_dir="rthome:[examples.bench.server]"
+    else
+      bench_dir=$RTHOME/examples/bench/server
+    fi
+  fi
+  if [ $BENCH_SERVER_VMS ] ; then
+    # MCR is an undocumented VMS command that combines RUN and foreign
+    # commmands in one step.  SMW 11/20/94
+    # CX/UX 7.1 needs the -n after the node name.  SMW 12/17/94
+    exec rtrsh $BENCH_SERVER_NODE -n \
+      mcr rtserver$b -no_daemon -threads $num_rtserver_threads -command "$bench_dir"rtserver.cm > server.out
+  else
+    # CX/UX 7.1 needs the -n after the node name.  SMW 12/17/94
+    exec rtrsh $BENCH_SERVER_NODE -n \
+      rtserver$b -no_daemon -threads $num_rtserver_threads -command $bench_dir/rtserver.cmd > server.out
+  fi
+else
+  exec rtserver$b -no_daemon -threads $num_rtserver_threads > server.out
+fi

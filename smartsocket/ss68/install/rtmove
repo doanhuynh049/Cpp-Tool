@@ -1,0 +1,270 @@
+:
+
+#
+# Copyright (c) 1991-2006 TIBCO Software Inc.
+# All rights reserved.
+# For more information, please contact:
+# TIBCO Software Inc., Palo Alto, California, USA
+#
+# $Id: //dev/packages/build/dev/68/src/scripts/rtmove.sh#2 $
+#
+
+# /* --------------------------------------------------------------- */
+
+
+# rtmove.sh -- move SmartSockets to another directory
+
+# Enable command echoing if desired
+if [ $RTVERBOSE ] ; then
+  set -x
+fi
+
+# Figure out if this is SmartSockets only or SmartSockets and RTie.
+# If not, it is SmartSockets Product Family.
+if [ ! -f bin/rtlinkarchive ]; then
+  if [ -f bin/rtlinkie ]; then
+    SSIEONLY=1 ; export SSIEONLY
+  else
+    SSONLY=1 ; export SSONLY
+  fi
+fi
+
+# Figure out if this is SmartSockets only or SmartSockets and RTie.
+# If not, it is SmartSockets Product Family.
+if [ $SSONLY ] ; then
+  product="SmartSockets"
+elif [ $SSIEONLY ] ; then
+  product="SmartSockets and RTie"
+else
+  product="SmartSockets Product Family"
+fi
+
+# Reset the architecture to the target architecture if this is VxWorks
+if [ "$VXARCH" != "" ] ; then
+  RTARCH=$VXARCH
+fi
+
+# Make sure we have good stuff on our path.
+PATH=./bin:./install:/usr/ucb:/usr/bsd:/usr/bin:/bin ; export PATH
+
+# Get name of current directory.
+current_dir=`/bin/pwd`
+if [ $? -ne 0 ]; then
+  echo "ERROR: Cannot determine the current working directory."
+  echo "Please contact Tibco Technical Support."
+  exit 1
+fi
+
+# For those using automount, strip off the leading /tmp_mnt.
+default_dir=`pwd`
+
+# Make sure the directories from file #1 are all here.
+missing_dirs=0
+if [ ! \( -d bin -a -d help -a -d include -a -d install -a -d standard \) ]; then
+  missing_dirs=1
+fi
+
+if [ $missing_dirs -eq 1 ] ; then
+  echo "ERROR: Several files appear to be missing.  This script must be run"
+  echo "from the directory where the first $product files were loaded."
+  exit 1
+fi
+
+# Make sure that scripts we need are out there.
+if [ ! \( -f install/rtaskdir -a -f bin/rtarch -a -f bin/subs \) ]; then
+  echo "ERROR: Scripts are missing.  Can't continue."
+  echo "Please contact Tibco Technical Support."
+  exit 1
+fi
+
+# Generate our $product architecture.
+# For VxWorks, RTARCH and hostarch are different because of the
+# cross-development environment.
+hostarch=`bin/rtarch`
+if [ "$CPU" != "" -a \( "$WIND_BASE" != "" -o "$VX_VW_BASE" != "" \) ] ; then
+  if [ -f bin/rtvxarch ] ; then
+    RTARCH=`bin/rtvxarch` ; export RTARCH
+    os_type=`bin/rtvxarch -os_type`
+    os_integer=`bin/rtvxarch -os_integer`
+    os_minimum=`bin/rtvxarch -os_minimum`
+  else
+    echo "ERROR: VxWorks script is missing.  Can't continue."
+    echo "Please contact Tibco Technical Support."
+    exit 1
+  fi
+else
+  RTARCH=`bin/rtarch` ; export RTARCH
+  os_type=`bin/rtarch -os_type`
+  os_integer=`bin/rtarch -os_integer`
+  os_minimum=`bin/rtarch -os_minimum`
+fi
+
+# Initializations.
+orig_rthome_value=/home/rtworks
+static_lib_dir=lib/$RTARCH/static
+
+# ----------------------------------------------------------------------
+# Check the OS version to make sure that it is recent enough.
+# ----------------------------------------------------------------------
+if [ $os_integer -lt  $os_minimum ]; then
+  echo ERROR: Your operating system appears to be too old
+  echo to support this version of $product \($os_integer vs. $os_minimum\).
+  echo Please contact Tibco Technical Support.
+  exit 1
+fi
+
+# On SunOS 4.1.X we can use "ranlib -t", which is much faster.
+if [ $RTARCH = sun4_sunos ]; then
+  ranlib="ranlib -t"
+else
+  ranlib=true       # dummy command
+fi
+
+echo ""
+echo ""
+echo "Welcome to rtmove, which reinitializes $product "
+echo "once it has been moved to a new directory."
+echo ""
+echo "When this script asks you questions, a default answer"
+echo "is shown in brackets next to the question.  To use the"
+echo "default answer, press <Return> in response to the question."
+echo "Otherwise, type one of the other suggested responses and"
+echo "then press <Return>."
+echo ""
+echo "This script will ask all its questions first, and then"
+echo "execute the actions you select."
+echo ""
+
+rtaskyn "Would you like to continue?"
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+# Figure out where the software is to be installed.
+echo ""
+echo "This script changes several $product files to reference this"
+echo "directory. Therefore it needs to know the correct name of"
+echo "this directory.  If you will be accessing this directory via"
+echo "NFS on several hosts, make sure the pathname is valid on all"
+echo "those hosts.  Do not use shell metacharacters (such as * or"
+echo "~) when answering this question."
+
+while [ 1 ] ; do
+  echo ""
+  echo "Please enter the full pathname that you would like to use to refer"
+  rtprompt "to this directory [$default_dir]: "
+  install_dir=`rtaskdir`
+  if [ $? -ne 0 ]; then
+    echo "ERROR: Asking directory name failed."
+    echo "Please contact Tibco Technical Support."
+    exit 1
+  fi
+  if [ "$install_dir" = "" ]; then
+    install_dir=$default_dir
+  fi
+  if [ ! -d $install_dir ]; then
+    echo "The directory $install_dir does not exist."
+    echo "Please try again."
+  else # directory does exist
+    # make sure that they gave us the same directory
+    real_install_dir=`cd $install_dir; /bin/pwd`
+    if [ $real_install_dir != $current_dir ]; then
+      echo ""
+      echo "The directory $install_dir is not the"
+      echo "same as the directory $current_dir."
+      echo "Please try again."
+      echo ""
+    else
+      break
+    fi
+  fi
+done
+
+# Use the install_dir as RTHOME.
+RTHOME=$install_dir ; export RTHOME
+
+# Do the work
+
+# Get our scripts working.
+echo "Modifying $product text files to reference $RTHOME."
+for f in rtinit.csh rtinit.sh ; do
+  # Move the current one to .old.
+  rm -f bin/$f.old
+  if [ -f bin/$f ]; then
+    mv -f bin/$f bin/$f.old
+  fi
+  if [ -f bin/$f ]; then
+    echo "WARNING: Cannot move bin/$f out of the way."
+  fi
+  # Copy in a blank one from $RTHOME/install
+  cp install/$f bin/
+  env RTARCH=$hostarch bin/subs $orig_rthome_value $RTHOME bin/$f > /dev/null
+done
+
+# Have to source rtinit.csh before we can use rtlinkserver.  We can also
+# pick up DVHOME from rtinit.csh too.
+# Don't reset RTARCH if this is VxWorks.
+if [ "$RTARCH" != "$VXARCH" ] ; then
+  RTDEV_SHELL= ; export RTDEV_SHELL   # just in case.
+  RTUSER_SHELL= ; export RTUSER_SHELL # just in case.
+  . bin/rtinit.sh
+fi
+
+# Update the libraries.
+echo "Updating libraries."
+$ranlib $static_lib_dir/*.a lib/$RTARCH/*.sa.*
+if [ $RTARCH = sun4_sunos ]; then
+  # Try linking a program to see if we have to use "ranlib" instead of
+  # "ranlib -t"
+  env CC=/bin/cc rtlinkserver -o /tmp/rtserver$$.tmp >  /tmp/cc$$.tmp 2>&1
+  grep ranlib /tmp/cc$$.tmp >  /dev/null
+  if [ $? -eq 0 ]; then
+    echo NFS server wall clock time is ahead of this system\'s wall clock time.
+    echo Updating libraries again the slow but safe way.
+    echo This will take a few extra minutes.
+    ranlib="ranlib"
+    $ranlib $static_lib_dir/*.a lib/$RTARCH/*.sa.*
+  fi
+  rm -f /tmp/rtserver$$.tmp /tmp/cc$$.tmp
+fi
+
+
+cd $install_dir
+
+# Now comes the fun part of installing DataViews.  We use the config
+# from the Tibco development environment, which has X11 and Motif
+# support.
+
+# Update the libraries ... won't exist with SmartSockets.
+if [ -d $DVHOME/lib ]; then
+  $ranlib $DVHOME/lib/lib*.a $DVHOME/lib/lib*.sa.*
+fi
+
+path=.:$install_dir/bin:$install_dir/bin/$RTARCH:$PATH; export PATH
+
+if [ $RTARCH = sun4_sunos -o $RTARCH = sun4_solaris \
+     -o $RTARCH = alpha_osf -o $RTARCH = iris_irix \
+     -o $RTARCH = i86_linux ]; then
+  if [ $LD_LIBRARY_PATH ]; then
+    LD_LIBRARY_PATH=$install_dir/lib/$RTARCH:$LD_LIBRRAY_PATH; export LD_LIBRARY_PATH
+  else
+    LD_LIBRARY_PATH=$install_dir/lib/$RTARCH; export LD_LIBRARY_PATH
+  fi
+elif [ $RTARCH = hp700_hpux ]; then
+  if [ $SHLIB_PATH ]; then
+    SHLIB_PATH=$install_dir/lib/$RTARCH:$SHLIB_PATH; export SHLIB_PATH
+  else
+    SHLIB_PATH=$install_dir/lib/$RTARCH; export SHLIB_PATH
+  fi
+else
+  if [ $RTARCH = rs6000_aix ]; then
+    if [ $LIBPATH ]; then
+      LIBPATH=$install_dir/lib/$RTARCH:$LIBPATH; export LIBPATH
+    else
+      LIBPATH=$install_dir/lib/$RTARCH; export LIBPATH
+    fi
+  fi
+fi
+
+echo ""
+echo "Done moving $product to $RTHOME."

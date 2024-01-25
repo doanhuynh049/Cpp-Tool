@@ -1,0 +1,33 @@
+/* Copyright (c) 1991-2006 TIBCO Software Inc. */
+/* All rights reserved. */
+/* For more information, please contact: */
+/* TIBCO Software Inc., Palo Alto, California, USA */
+/**/
+/* $Id: //dev/packages/tdf/server/dev/68/src/standard/rtserver.cm#1 $ */
+
+/* --------------------------------------------- */
+/* rtserver.cm -- defaults for RTserver options */
+/* --------------------------------------------- */
+
+/* ----------------------------------------------------------------- */
+/* This file is loaded BEFORE rtserver.cm in the home directory and  */
+/* current directory.                                                */
+/* ----------------------------------------------------------------- */
+
+/* ------------------------------------------------------ */
+/* generic options for all processes (IE, DAQ, HCI, etc). */
+/* ------------------------------------------------------ */
+setopt prompt           "SERVER> "
+setopt time_format      hms
+setopt trace_flags              prefix, timestamp
+
+/* ------------------------- */
+/* RTserver-specific options */
+/* ------------------------- */
+setopt client_connect_timeout   10.0
+setopt client_max_buffer    10000000 /* ~10 MB */
+setopt log_in_client        UNKNOWN
+setopt log_in_server        UNKNOWN
+setopt log_out_client       UNKNOWN
+setopt log_out_server       UNKNOWN
+setopt udp_broadcast_timeout    5.0

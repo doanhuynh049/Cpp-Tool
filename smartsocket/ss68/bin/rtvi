@@ -1,0 +1,59 @@
+:
+
+#
+# Copyright (c) 1991-2006 TIBCO Software Inc.
+# All rights reserved.
+# For more information, please contact:
+# TIBCO Software Inc., Palo Alto, California, USA
+#
+# $Id: //dev/packages/build/dev/68/src/scripts/rtvi.sh#1 $
+#
+
+# /* --------------------------------------------------------------- */
+
+# ----------------------------------------
+# Make sure they specified two arguments.
+# ----------------------------------------
+if [ $# -ne 2 ]; then
+  echo Usage: $0 line fname
+  echo Example: $0 1 tank.rl 
+  exit 0
+fi
+
+#
+# The first arg is the line number and the 2nd is the filename
+# to call vi with.
+#
+
+# 
+# If there is no DISPLAY variable, we can't run xterm
+#
+if [ $DISPLAY ]; then
+
+  #
+  # Verify that xterm is available
+  # 
+  paths=`echo $PATH|sed -e 's/:/ /g'`
+  found=0
+  for p in $paths; do
+    if [ -x $p/xterm ]; then
+      found=1
+      break;
+    fi
+  done
+
+  #
+  # Use xterm if it was on the PATH
+  #
+  if [ $found -eq 1 ]; then
+    xterm -e vi +$1 "$2"
+  else
+    # DISPLAY is set, but xterm is not found
+    vi +$1 "$2"
+  fi
+else
+  # DISPLAY is not set
+  vi +$1 "$2"
+fi
+
+exit

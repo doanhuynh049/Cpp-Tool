@@ -1,0 +1,24 @@
+/* Copyright (c) 1991-2006 TIBCO Software Inc. */
+/* All rights reserved. */
+/* For more information, please contact: */
+/* TIBCO Software Inc., Palo Alto, California, USA */
+/**/
+/* $Id: //dev/packages/tmc/dev/68/src/standard/mcast.cm#1 $ */
+
+/* ------------------------------------ */
+/* mcast.cm -- defaults for PGM options */
+/* ------------------------------------ */
+
+
+/* ------------------------------------------- */
+/* This file is loaded by the PGM link driver. */
+/* ------------------------------------------- */
+
+/* ---------------------------------------------------------------- */
+/* If the following option is set to 0 then the RTgms and RTclients */
+/* must be run as root.                                             */
+/*                                                                  */
+/* The RTgms and RTclients must have this option set the same.      */
+/* ---------------------------------------------------------------- */
+setopt pgm_udp_encapsulation 1
+setopt pgm_source_max_trans_rate 4000000

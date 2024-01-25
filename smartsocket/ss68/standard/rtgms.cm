@@ -1,0 +1,14 @@
+/* Copyright (c) 1991-2006 TIBCO Software Inc. */
+/* All rights reserved. */
+/* For more information, please contact: */
+/* TIBCO Software Inc., Palo Alto, California, USA */
+/**/
+/* $Id: //dev/packages/tmc/dev/68/src/standard/rtgms.cm#1 $ */
+
+setopt server_names              tcp:_node
+setopt conn_names                pgm:_node
+setopt group_names               rtworks
+setopt enable_control_msgs       _all
+setopt group_threshold           1
+setopt _group_flush_interval     2.0
+setopt server_auto_flush_size    1300

@@ -1,0 +1,1950 @@
+/* --------------------------------------------------------------- */
+/* COPYRIGHT, 1991-2000 TALARIAN CORPORATION. ALL RIGHTS RESERVED. */
+/* UNPUBLISHED -- RIGHTS RESERVED UNDER THE COPYRIGHT LAWS OF      */
+/* THE UNITED STATES. USE OF A COPYRIGHT NOTICE IS PRECAUTIONARY   */
+/* ONLY AND DOES NOT IMPLY PUBLICATION OR DISCLOSURE.              */
+/*                                                                 */
+/* THIS DOCUMENTATION CONTAINS PROPRIETARY AND CONFIDENTIAL        */
+/* INFORMATION OF TALARIAN CORPORATION. USE, DISCLOSURE, OR        */
+/* REPRODUCTION IS PROHIBITED WITHOUT THE PRIOR EXPRESS WRITTEN    */
+/* PERMISSION OF TALARIAN CORPORATION.                             */
+/*                                                                 */
+/*                   RESTRICTED RIGHTS LEGEND                      */
+/*                                                                 */
+/* Use, duplication, or disclosure by the Government is subject    */
+/* to restrictions set forth in subparagraph (c)(1)(ii) of the     */
+/* rights in Technical Data and Computer Software clause at        */
+/* DFARS 252.227-7013.                                             */
+/*                     Talarian Corporation                        */
+/*             333 Distel Circle, Los Altos, CA 94022              */
+/* --------------------------------------------------------------- */
+
+/* common_opt.hlp */
+
+/* $Header: /home/rtworks/cvsroot/src/help/common_opt.hlp,v 1.10 1998/01/29 23:26:18 jon Exp $ */
+
+
+AUTH_DATA_FILE
+
+/* synopsis */
+"Auth_Data_File: credential file for security driver"
+
+/* detailed help */
+" "
+"Auth_Data_File specifies the file containing file-based credentials."
+"This option is useful for legacy applications that need to send credentials"
+"to a security driver.  A credentials file may be created using RTacl."
+" "
+"Type: String"
+"Default: None"
+" "
+
+BACKUP_NAME
+
+/* synopsis */
+"Backup_Name: extension for backup files"
+
+/* detailed help */
+" "
+"Backup_Name specifies the extension given to a backup file created when"
+"a file is opened in write mode. This includes all files created in"
+"RTworks except for those created in RTsdb. The backup file has the same"
+"name as the existing file with the addition of the extension specified"
+"in this option."
+" "
+"Type: String"
+"Default: \"~\" on UNIX"
+"	  Unknown on VMS"
+"	  \"~\" on Windows"
+" "
+
+CACHE_GROUP_NAMES
+
+/* synopsis */
+"Cache_Group_Names: Names of cache groups to request data from"
+
+/* detailed help */
+" "
+"The Cache_Group_Names option specifies the names of the cache groups"
+"that this RTprocess requests data from.  Most cache API calls take a"
+"cache group name as an argument.  If the group name parameter is not"
+"specified then the group names listed in this option will be used."
+" "
+"Type: String List"
+"Default: /cache_group"
+" "
+
+CACHE_LB_MODE
+
+/* synopsis */
+"Cache_Lb_Mode: Load balancing mode used for sending cache requests to Cache"
+
+/* detailed help */
+" "
+"The Cache_Lb_Mode option sets the load balancing mode used for sending"
+"cache requests to Cache.  Valid values for this option are"
+"T_IPC_LB_ROUND_ROBIN or T_IPC_LB_SORTED."
+" "
+"Type: Identifier"
+"Default: T_IPC_LB_ROUND_ROBIN"
+" "
+
+CACHE_REQUEST_SUBJECT
+
+/* synopsis */
+"Cache_Request_Subject: unique_subject of cache process"
+
+/* detailed help */
+" "
+"The Cache_Request_Subject option specifies the unique subject"
+"of the SmartSockets Cache process to which an in-line cache request"
+"is sent.  This option also determines the default subject to which"
+"cache requests are sent over a virtual connection."
+" "
+"Type: String"
+"Default: /cache"
+" "
+
+CACHE_REQUEST_TIMEOUT
+
+/* synopsis */
+"Cache_Request_Timeout: Number of seconds to wait for cache response to a request"
+
+/* detailed help */
+" "
+"The Cache_Request_Timeout option specifies the number of seconds the"
+"RTprocess waits for SmartSockets Cache to respond to a cache request."
+"This option also determines the default timeout used with virtual connections."
+" "
+"Type: Real Number"
+"Default: 10.0"
+" "
+
+CATALOG_FILE
+
+/* synopsis */
+"Catalog_File: catalog filename of resource strings"
+
+/* detailed help */
+" "
+"Catalog_File specifies the filename used for the resource catalog."
+" "
+"Type: String"
+"Default: $RTHOME/standard/tal_ss.cat"
+" "
+
+CATALOG_FLAGS
+
+/* synopsis */
+"Catalog_Flags: used to set catalog flags"
+
+/* detailed help */
+" "
+"Catalog_Flags specifies how to format the catalog strings. The available"
+"flags are:"
+"     id - the catalog string identifier is included in the output"
+" "
+"Setting the option to unknown or unsetting the option using the unsetopt"
+"command will clear all flags."
+" "
+"Type: String List"
+"Default: id"
+" "
+
+COMMAND_FEEDBACK
+
+/* synopsis */
+"Command_Feedback: reports successful command completion"
+
+/* detailed help */
+"     "
+"Command_Feedback determines when to report successful completion"
+"of commands. There are three possible values:"
+"     always - feedback is always given"
+"     interactive - feedback is only given when the command is"
+"             entered interactively by the user"
+"     never - feedback is never given"
+"       "
+"Type: Identifier (never | interactive | always)"
+"Default: interactive"
+"      "
+
+COMPRESSION
+
+/* synopsis */
+"Compression: enables connection level compression"
+
+/* detailed help */
+"     "
+"The Compression option specifies whether connection-level compression is"
+"enabled.  If set to TRUE then all data sent on all connections is"
+"compressed.  An alternative to using the Compression option is to"
+"set the compression property of the enhanced LCN in either the"
+"Conn_Names option or the Server_Names option.  The actual compression"
+"algorithm used is specified by the Compression_Name option."
+"       "
+"Type: Boolean"
+"Default: FALSE"
+"      "
+
+COMPRESSION_ARGS
+
+/* synopsis */
+"Compression_Args: Arguments passed to compression library"
+
+/* detailed help */
+"     "
+"The Compression_Args option allows arguments specific to the compression"
+"library specified by the Compression_Name option to be passed to it."
+"Currently, the only available compression library is ZLIB.  The valid"
+"argument for the ZLIB library is an integer value from 1 to 9, which"
+"specifies the compression level.  1 gives the best speed, 9 gives the"
+"best compression."
+"       "
+"Type: String"
+"Default: 6"
+"      "
+
+COMPRESSION_NAME
+
+/* synopsis */
+"Compression_Name: compression library"
+
+/* detailed help */
+"     "
+"The Compression_Name option specifies what SmartSockets compression"
+"library is used to perform connection-level compression and message"
+"compression.  Currently, the only available compression library is"
+"ZLIB."
+"       "
+"Type: String"
+"Default: ZLIB"
+"      "
+
+COMPRESSION_SIZE
+
+/* synopsis */
+"Compression_Size: Maximum size of compression buffer"
+
+/* detailed help */
+"     "
+"The Compression_Size option specifies the maximum size of the buffer"
+"for the compression algorithm specified by the Compression_Name option."
+"       "
+"Type: Numeric"
+"Default: 8192"
+"      "
+
+COMPRESSION_STATS
+
+/* synopsis */
+"Compression_Stats: enables compression statistics"
+
+/* detailed help */
+"     "
+"The Compression_Stats option specifies whether compression"
+"statistics are printed.  When set to TRUE, compression statistics"
+"are printed approximately every 30 seconds.  Enabling compression"
+"statistics is intended for debugging purposes only because it"
+"lowers performance."
+"       "
+"Type: Boolean"
+"Default: FALSE"
+"      "
+
+DBMS_DRIVER
+
+/* synopsis */
+"Dbms_Driver: database management system used to access variable table"
+
+/* detailed help */
+" "        
+"Dbms_Driver specifies which database management system (DBMS) driver" 
+"the process uses to access the variable table. The process accesses"
+"the variable table using the DBMS-independent callable functions."
+"Therefore, the variable table may be physically stored in an"
+"arbitrary DBMS, provided that an appropriate driver is available."
+" "
+"Once set, this option cannot be changed."
+" "
+"Type: Identifier "
+"Default: rtsdb"
+" "
+
+DBMS_DRIVER_ARG
+
+/* synopsis */
+"Dbms_Driver_Arg: argument passed to DBMS driver when opened"
+
+/* detailed help */
+" "
+"Dbms_Driver_Arg specifies an optional argument that is passed to"
+"the DBMS driver (see Dbms_Driver) when it is opened. The"
+"contents of this argument are specific to the driver."
+" "
+"The rtsdb driver does not require an argument."
+" "
+"Once set, this option cannot be changed."
+" "
+"Type: String"
+"Default: None"
+" "
+
+DBMS_TABLE_LOCKING
+
+/* synopsis */
+"Dbms_Table_Locking: specifies whether or not variable table is locked when accessed"
+
+/* detailed help */
+" "
+"Dbms_Table_Locking specifies whether table locking is used when"
+"accessing the variable table. When TRUE, all accesses to the"
+"variable table are regulated by table locks, and table access"
+"can be slower. When FALSE, all accesses are dirty, that is,"
+"under no table-locking control, but table access can be faster."
+" "
+"Type: Boolean"
+"Default: TRUE"
+" "
+
+DEFAULT_MSG_PRIORITY
+
+/* synopsis */
+"Default_Msg_Priority: default priority for newly created messages"
+
+/* detailed help */
+" "
+"Default_Msg_Priority specifies the default priority for newly created"
+"messages.  The message priority property controls where an incoming"
+"message is inserted into a connection's message queue.  When a message"
+"is created, its priority is initialized to the message type priority"
+"(if set) or to Default_Msg_Priority (if the message type priority is"
+"unknown)."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: Numeric (any integer between -32768 and 32767, inclusive)"
+"Default: 0"
+" "
+
+DEFAULT_ATTR_NAME
+
+/* synopsis */
+"Default_Attr_Name: default attribute name for generated slot names"
+
+/* detailed help */
+" "
+"Default_Attr_Name contains an attribute name which will be used when"
+"a default slot is created by an RTworks process."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: String"
+"Default: attr"
+" "
+
+DEFAULT_CLASS_NAME
+
+/* synopsis */
+"Default_Class_Name: default class name for generated slot names"
+
+/* detailed help */
+" "
+"Default_Class_Name contains a class name which will be used when"
+"a default slot is created by an RTworks process."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: String"
+"Default: class"
+" "
+
+DEFAULT_PRIMARY_KEY
+
+/* synopsis */
+"Default_Primary_Key: primary key column for newly created variable tables"
+
+/* detailed help */
+" "
+"Default_Primary_Key specifies which variable table column shall"
+"become the primary key when a new variable table is created."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: Identifier (slot | variable)"
+"Default: slot"
+" "
+
+DEFAULT_PROTOCOLS
+
+/* synopsis */ 
+"Default_Protocols: IPC protocols to use if no protocol is listed in Lm_Names or Server_Names"
+
+/* detailed help */
+"       "
+"Default_Protocols specifies a list of IPC protocols to try if no"
+"protocol is listed in a logical connection name in the Lm_Names"
+"and Server_Names options. The valid default protocols are local"
+"and tcp."
+" "
+"Type: Identifier List"
+"Default: local, tcp (UNIX)"
+"         tcp (Windows, VMS)"
+"     "
+
+DEFAULT_SUBJECT_PREFIX
+
+/* synopsis */
+"Default_Subject_Prefix: qualifier to prepend to message subject names that don't start with \"/\""
+
+/* detailed help */
+" "
+"Default_Subject_Prefix specifies the qualifier to prepend to message"
+"subject names that don't start with \"/\".  Subject names are"
+"organized in a hierarchical namespace where the components are"
+"delimited by \"/\".  A subject name that starts with \"/\" is called"
+"an absolute subject name.  All non-absolute subject names have"
+"Default_Subject_Prefix prepended to them in order to create a fully"
+"qualified name for the hierarchical subject namespace."
+" "
+"If this option is unset (UNKNOWN) then RTclient will use the value of"
+"Default_Subject_Prefix from RTserver."
+" "
+"Type: String"
+"Default: None"
+" "
+
+EDITOR
+
+/* synopsis */
+"Editor: editor (emacs, vi, etc.)"
+
+/* detailed help */
+"        "
+"Editor specifies what the default editor for this process is. Typical"
+"values might be emacs, vi, etc."
+"      "
+"Type: Identifier"
+"Default: vi (UNIX)"
+"         edt (VMS)"
+"         notepad (Windows)"
+"        "
+
+ENABLE_CONTROL_MSGS
+
+/* synopsis */
+"Enable_Control_Msgs: list of commands allowed in a CONTROL message"
+
+/* detailed help */
+"        "
+"The Enable_Control_Msgs option is a string list specifying the"
+"commands allowed in a CONTROL message. The default allows the"
+"inclusion of the echo and quit commands via a CONTROL message. When"
+"this option is set to UNKNOWN, all commands (including echo and quit)"
+"are disabled. Setting this option to _all allows the inclusion of all"
+"valid commands in a CONTROL message."
+"      "
+"Security-conscious sites should set this option carefully. There are"
+"several commands that may be dangerous when executed. Specifically,"
+"the alias, connect, disconnect, retrieve, setopt, sh, source,"
+"subscribe, unalias, unsetopt, and unsubscribe commands should only be"
+"specified with extreme caution."
+"      "
+"Type: String List"
+"Default: \"echo\", \"quit\""
+"        "
+
+FRAME_INTERVAL
+
+/* synopsis */
+"Frame_Interval: how often an RTworks process calls the frame function"
+
+/* detailed help */
+"     "
+"Frame_Interval is a floating-point number representing how often (in"
+"seconds) a process should call the frame function when reading from a data"
+"source (other than RTserver). If the frame function completes before"
+"the Frame_Interval has elapsed, the process sleeps for the necessary time"
+"before calling the frame function again."
+"       "
+"Type: Numeric"
+"Default: 0.0"
+"     "
+
+GROUP_NAMES
+
+/* synopsis */
+"Group_Names: a list of multicast groups"
+
+/* detailed help */
+"     "
+"Group_Names specifies a list of multicast groups. This is the list of"
+"groups to which this process belongs, and indicates to the RTgms how to"
+"route multicast messages for this process."
+"       "
+"This option is optional, and is only used if the process is licensed for"
+"multicast use."
+"       "
+"Type: String"
+"Default: None"
+"     "
+
+IPC_GMD_AUTO_ACK
+
+/* synopsis */ 
+"Ipc_Gmd_Auto_Ack: automatic acknowledgement for guaranteed message delivery"
+
+/* detailed help */
+"       "
+"Ipc_Gmd_Auto_Ack specifies whether automatic acknowledgement for guaranteed"
+"message delivery is enabled or disabled. If set TRUE, when a message received"
+"by guaranteed message delivery is destroyed an acknowledgement is"
+"automatically sent to the publisher. If set FALSE, it is the user's"
+"responsibility to explicitly acknowledge receipt of the message."
+" "
+"Type: Boolean"
+"Default: TRUE"
+"     "
+
+IPC_GMD_AUTO_ACK_POLICY
+
+/* synopsis */ 
+"Ipc_Gmd_Auto_Ack_Policy: the auto-acknowledgement policy for guaranteed message delivery"
+
+/* detailed help */
+"       "
+"When automatic GMD aknowledgement is enabled Ipc_Gmd_Auto_Ack_Policy specifies"
+"when guaranteed messages are acknowledged, either the first time a message"
+"is destroyed or the last time a message is destroyed (when the message's"
+"reference count becomes zero.)"
+" "
+"Type: Identifier (first_destroy | last_destroy)"
+"Default: first_destroy"
+"     "
+
+IPC_GMD_DIRECTORY
+
+/* synopsis */ 
+"Ipc_Gmd_Directory: directory where messages are stored for guaranteed message delivery"
+
+/* detailed help */
+"       "
+"Ipc_Gmd_Directory specifies the directory used to store messages for"
+"guaranteed message delivery. These messages are saved on disk so that"
+"they can be resent after a delivery failure. For best performance,"
+"this directory should be on a local filesystem. Read and write access"
+"to this directory is required."
+" "
+"Type: String"
+"Default: /tmp/rtworks (UNIX)"
+"         sys$scratch (VMS)"
+"         %TEMP%\\rtworks (Windows)"
+"     "
+
+IPC_GMD_TYPE
+
+/* synopsis */ 
+"Ipc_Gmd_Type: used to force memory-only GMD"
+
+/* detailed help */
+"       "
+"Ipc_Gmd_Type specifies whether file-based or memory-based GMD is to be"
+"used. The values are:"
+"     default - File-based GMD is attempted, and if unsuccessful,"
+"               memory-based GMD is used."
+"     memory  - Memory-based GMD is used, regardless."
+" "
+"Type: Identifier"
+"Default: default"
+"     "
+
+LM_NAMES
+
+/* synopsis */
+"Lm_Names: logical connection names used to find and start RTlm"
+
+/* detailed help */
+" "
+"Lm_Names specifies a list of logical connection names used to"
+"find and start RTlm. Each logical connection name has the form"
+"protocol:node:address, which can be shortened to protocol:node,"
+"protocol, or node."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: String List"
+"Default: _node"
+" "
+
+LM_START_DELAY
+
+/* synopsis */
+"Lm_Start_Delay: time process sleeps between traversals of names in Lm_Names"
+
+/* detailed help */
+" "
+"Lm_Start_Delay specifies how long (in seconds) a process sleeps"
+"between traversals of each connection name in the Lm_Names option."
+"This option can be used to control the number of processes that"
+"attempt to start RTlm and the rate that these attempts occur."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: Numeric"
+"Default: 1.0 (second)"
+" "
+
+LM_START_MAX_TRIES
+
+/* synopsis */
+"Lm_Start_Max_Tries: how many times to traverse each name in Lm_Names"
+
+/* detailed help */
+" "
+"Lm_Start_Max_Tries specifies how many times to traverse each"
+"connection name in the Lm_Names option attempting to find and"
+"start RTlm. The process does not operate (e.g., not load views"
+"or compile a knowledge base) if it cannot create a connection"
+"to RTlm and check out the necessary license."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: Numeric"
+"Default: 1"
+" "
+
+LM_START_TIMEOUT
+
+/* synopsis */
+"Lm_Start_Timeout: max time process waits for RTlm to finish initializing"
+
+/* detailed help */
+" "
+"Lm_Start_Timeout specifies the maximum amount of time (in seconds) a" 
+"process waits for RTlm to finish initializing once the process has"
+"started RTlm. If RTlm does not finish initializing within the timeout"
+"period, the process tries the next connection name in the Lm_Names"
+"option."
+" "
+"This option is required and cannot be unset."
+" " 
+"Type: Numeric"
+"Default: 30.0 (seconds)"
+" "
+
+LOG_IN_DATA
+
+/* synopsis */
+"Log_In_Data: name of file to use to log incoming data-related messages"
+
+/* detailed help */
+"     "
+"Log_In_Data specifies the name of a file that the process should"
+"use to log incoming data-related messages. "
+"    "
+"Type: String"
+"Default: None"
+"     "
+
+LOG_IN_INTERNAL
+
+/* synopsis */
+"Log_In_Internal: name of file to use to log incoming internal messages"
+
+/* detailed help */
+"     "
+"Log_In_Internal specifies the name of a file that the process"
+"should use to log incoming internal messages. "
+"     "
+"Type: String"
+"Default: None"
+"    "
+
+LOG_IN_MSGS
+
+/* synopsis */
+"Log_In_Msgs: name of file to use to log all incoming messages"
+
+/* detailed help */
+"     "
+"Log_In_Msgs specifies the name of a file that the process should"
+"use to log all incoming. "
+"    "
+"Type: String"
+"Default: None"
+"     "
+
+LOG_IN_STATUS
+
+/* synopsis */
+"Log_In_Status: name of file to use to log incoming status messages"
+
+/* detailed help */
+"        "
+"Log_In_Status specifies the name of a file that the process should"
+"use to log incoming status messages. "
+"      "
+"Type: String"
+"Default: None"
+"     "
+
+LOG_OUT_DATA
+
+/* synopsis */
+"Log_Out_Data: name of file to use to log outgoing data-related messages"
+
+/* detailed help */
+"      "
+"Log_Out_Data specifies the name of a file that the process should"
+"use to log outgoing data-related messages."
+"      "
+"Type: String"
+"Default: None"
+"     "
+
+LOG_OUT_INTERNAL
+
+/* synopsis */
+"Log_Out_Internal: name of file to use to log outgoing internal messages"
+
+/* detailed help */
+"      "
+"Log_Out_Internal specifies the name of a file that the process"
+"should use to log outgoing internal messages. "
+"      "
+"Type: String"
+"Default: None"
+"      "
+
+LOG_OUT_MSGS
+
+/* synopsis */
+"Log_Out_Msgs: name of file to use to log all outgoing messages"
+
+/* detailed help */
+"      "
+"Log_Out_Msgs specifies the name of a file that the process should"
+"use to log all outgoing messages."
+"      "
+"Type: String"
+"Default: None"
+"     "
+
+LOG_OUT_STATUS
+
+/* synopsis */
+"Log_Out_Status: name of file to use to log outgoing status messages"
+
+/* detailed help */
+"        "
+"Log_Out_Status specifies the name of a file that the process"
+"should use to log outgoing status messages. "
+"     "
+"Type: String"
+"Default: None"
+"    "
+
+MCAST_CM_FILE
+
+/* synopsis */
+"Mcast_Cm_File: name of the multicast command file"
+
+/* detailed help */
+" "
+"The Mcast_Cm_File option specifies the multicast command file which is"
+"parsed when the PGM protocol is used."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: String"
+"Default: $RTHOME/standard/mcast.cm"
+" "
+
+MONITOR_IDENT
+
+/* synopsis */
+"Monitor_Ident: the monitoring identification string of this process"
+
+/* detailed help */
+" "
+"The Monitor_Ident option specifies the monitoring identification string for"
+"this process. This identification string is used as a descriptive name for"
+"the process when it is being monitored."
+" "
+"Type: String"
+"Default: None"
+" "
+
+MONITOR_LEVEL
+
+/* synopsis */
+"Monitor_Level: Maximum level of monitoring"
+
+/* detailed help */
+" "
+"The Monitor_Level option specifies the maximum monitoring level."
+"There are 3 possible values for this option:"
+"     some - all monitoring except for traffic monitoring"
+"     all - all monitoring including traffic and memory"
+"             or cpu intensive monitoring"
+"     none - not currently supported"
+" "
+"Type: Identifier (some | all | none)"
+"Default: some"
+" "
+
+MONITOR_SCOPE
+
+/* synopsis */
+"Monitor_Scope: filter for level of interest in certain monitoring categories"
+
+/* detailed help */
+" "
+"The Monitor_Scope option specifies the level of interest for"
+"SmartSockets monitoring in those monitoring categories with no"
+"parameters (e.g., client names poll) or a parameter of @ (e.g., client"
+"time watch). Monitor_Scope acts as a filter which can be used to"
+"prevent a large application from swamping a monitoring program, and"
+"thus the default is \"/*\", which matches all subject names at the first"
+"level of the hierarchical subject namespace. All filtering is disabled"
+"if Monitor_Scope is set to \"/...\", which matches all names."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: String"
+"Default: \"/*\""
+" "
+
+PERSISTENT_MSG_ACK_INTERVAL
+
+/* synopsis */
+"Persistent_Msg_Ack_Interval: rms client option"
+
+/* detailed help */
+" "
+"The Persistent_Msg_Ack_Interval option is a rms client option only."
+"If option is set to 1, then msg acks will be automatically acknowledged."
+"Otherwise this option will set the ack_interval to specified number"
+"of seconds for client acknowledgement."
+"      "
+"Type: Numeric"
+"Default: 1"
+"      "
+
+PLAYBACK_CHECK_COUNT
+
+/* synopsis */
+"Playback_Check_Count: number of times process attempts to connect to RTplayback"
+
+/* detailed help */
+"       "
+"Playback_Check_Count specifies the number of times the process"
+"attempts to connect to RTplayback when using the playback data"
+"source. The process attempts to connect once per Frame_Interval."
+"For example, if the Frame_Interval option is set to 2 seconds,"
+"and Playback_Check_Count is set to 3, the process makes 3"
+"attempts, 1 every 2 seconds, to connect to RTplayback."
+"      "
+"Type: Numeric"
+"Default: 3"
+"      "
+
+PROJECT
+
+/* synopsis */
+"Project: project that process is connected to"
+
+/* detailed help */
+"      "
+"Project specifies the name of the project to which the"
+"process is to be connected."
+"      "
+"Type: Identifier"
+"Default: rtworks"
+"        "
+
+PROMPT
+
+/* synopsis */
+"Prompt: interface prompt for an RTworks process"
+
+/* detailed help */
+" "
+"Prompt specifies the command interface prompt for a process."
+" "
+"Type: String"
+"Default: None"
+" "
+
+PROXY_HOST
+
+/* synopsis */
+"Proxy_Host: host on which the proxy server is running"
+
+/* detailed help */
+" "
+"Proxy_Host is a string that specifies the host name on which a proxy server"
+"is running."
+" "
+"When connecting to a proxy server both Proxy_Host and Proxy_Port must be set."
+" "
+"Type: String"
+"Default: None"
+" "
+
+PROXY_PASSWORD
+
+/* synopsis */
+"Proxy_Password: password used for proxy server authentication"
+
+/* detailed help */
+" "
+"Proxy_Password is a string that specifies the user password the process"
+"provides to a proxy server for authentication. The password is only required"
+"for processes attempting to connect to proxy servers."
+" "
+"When connecting to a proxy server that requires authentication, both"
+"Proxy_Password and Proxy_Username must be set. If the proxy server does not"
+"require username/password authentication, then neither option is required."
+" "
+"Type: String"
+"Default: None"
+" "
+
+PROXY_PORT
+
+/* synopsis */
+"Proxy_Port: port on which the proxy server is listening for connections"
+
+/* detailed help */
+" "
+"Proxy_Port is a string that specifies the port on which a proxy server"
+"is listening."
+" "
+"When connecting to a proxy server both Proxy_Host and Proxy_Port must be set."
+" "
+"Type: String"
+"Default: None"
+" "
+
+PROXY_USERNAME
+
+/* synopsis */
+"Proxy_Username: username used for proxy server authentication"
+
+/* detailed help */
+" "
+"Proxy_Username is a string that specifies the username the process"
+"provides to a proxy server for authentication. The username is only required"
+"for processes attempting to connect to proxy servers."
+" "
+"When connecting to a proxy server that requires authentication, both"
+"Proxy_Password and Proxy_Username must be set. If the proxy server does not"
+"require username/password authentication, then neither option is required."
+" "
+"Type: String"
+"Default: None"
+" "
+
+REAL_NUMBER_FORMAT
+
+/* synopsis */
+"Real_Number_Format: format used to print real numbers"
+
+/* detailed help */
+" "
+"Real_Number_Format specifies the format used to print real numbers."
+"The format string should be a printf (a standard C function) conversion"
+"string."
+" "
+"Type: String"
+"Default: %g"
+" "
+
+SENDER_GET_REPLY
+
+/* synopsis */
+"Sender_Get_Reply: specifies whether or not to return the reply to property of a message rather than the sender field when calling TipcMsgGetSender"
+
+/* detailed help */
+" "
+"The Sender_Get_Reply option specifies whether or not a TipcMsgGetSender"
+"function call returns the sender field or the reply to message property."
+"Setting this option to TRUE causes TipcMsgGetSender to return the reply"
+"to message property instead of returning the sender field."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: Boolean	 "
+"Default: FALSE"
+" "
+
+SERVER_ASYNC_SUBSCRIBE
+
+/* synopsis */
+"Server_Async_Subscribe: specifies whether or not RTclient waits for a response from RTserver after sending a new subscription request."
+
+/* detailed help */
+" "
+"The Server_Async_Subscribe option specifies whether or not an RTclient waits"
+"for a response from RTserver after sending a new subscription request.  Setting"
+"the option to FALSE causes a subscribing RTclient to wait for a confirmation from"
+"RTserver before processing messages.  Setting the option to TRUE makes the RTclient"
+"asynchronous, so that it does not block while waiting for a response from RTserver."
+" "
+"This option only affects subscription calls, such as TipcSrvSubjectSetSubscribe,"
+"from clients that are also using username and password or other authorization "
+"protocols to connect to RTserver.  For example, clients using TipcSrvSetCredentials"
+"or TipcSrvSetUsernamePassword are affected.  For all other clients, subscription"
+"requests are asynchronous by default."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: Boolean	 "
+"Default: TRUE"
+" "
+
+SERVER_AUTO_CONNECT
+
+/* synopsis */
+"Server_Auto_Connect: specifies whether or not to automatically create a connection to RTserver"
+
+/* detailed help */
+" "
+"Server_Auto_Connect specifies whether or not a process should"
+"automatically create a connection to RTserver if one is needed"
+"(e.g., if a process tries to send a message to RTserver before"
+"it has created a connection to RTserver). To run the process"
+"without any connection to RTserver, Server_Auto_Connect must be"
+"set to FALSE."
+" "
+"While the process is running, if it has a \"warm connection\""
+"to RTserver, it can partially operate as if it still had a"
+"connection to RTserver (e.g., outgoing messages are buffered)."
+"If Server_Auto_Connect is set to FALSE when this warm connection"
+"exists, the process does not automatically attempt to recreate"
+"a connection to RTserver."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: Boolean	 "
+"Default: TRUE"
+" "
+
+SERVER_AUTO_FLUSH_SIZE
+
+/* synopsis */
+"Server_Auto_Flush_Size: bytes of data buffered to be sent to RTserver before automatically flushed"
+
+/* detailed help */
+" "
+"Server_Auto_Flush_Size specifies how many bytes of data are"
+"allowed to be buffered to be sent to RTserver before the data"
+"is automatically written (i.e., flushed) to the connection."
+"If Server_Auto_Flush_Size is set to 0, all outgoing messages"
+"are automatically flushed immediately. If a process is sending"
+"many messages in a short period of time, setting Server_Auto_Flush"
+"to a larger value can lessen the amount of CPU time the process uses."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: Numeric	 "
+"Default: 8192 (bytes)"
+" "
+
+SERVER_DELIVERY_TIMEOUT
+
+/* synopsis */ 
+"Server_Delivery_Timeout: how long to wait for delivery of guaranteed messages to all receivers"
+
+/* detailed help */
+"       "
+"Server_Delivery_Timeout specifies the maximum amount of time (in"
+"seconds) to allow all receiving processes to acknowledge delivery of a"
+"guaranteed message. The sending process does not synchronously wait"
+"for delivery to complete, but instead checks periodically. Checking"
+"for delivery timeouts is disabled if Server_Delivery_Timeout is set to"
+"0.0. If a guaranteed message sent to RTserver is not acknowledged"
+"within Server_Delivery_Timeout seconds, this is an error, and a"
+"GMD_FAILURE message will be processed."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric	 "
+"Default: 30.0 (seconds)"
+" "
+
+SERVER_DISCONNECT_MODE
+
+/* synopsis */
+"Server_Disconnect_Mode: action for RTserver to take when an RTclient disconnects from RTserver"
+
+/* detailed help */
+"       "
+"Server_Disconnect_Mode specifies the action RTserver should take when"
+"an RTclient disconnects from RTserver. There are thee possible values:"
+"     warm - RTserver should save subject information about this RTclient for"
+"         guaranteed message delivery (GMD) so that no messages are lost"
+"     gmd_failure - RTserver should destroy all information about this RTclient"
+"         and cause pending guaranteed message delivery to fail"
+"     gmd_success - RTserver should destroy all information about this RTclient"
+"         and cause pending guaranteed message delivery to succeed"
+" "
+"Setting the option to warm is useful when this RTclient must run"
+"continually and not lose any messages even if it crashes or"
+"accidentally terminates. In this mode, RTserver remembers the"
+"subjects being received by the disconnecting RTclient and will"
+"buffer guaranteed messages. When an RTclient process with the same value"
+"for the option Unique_Subject reconnects to RTserver, RTserver"
+"resends the guaranteed messages to RTclient. The option"
+"Client_Reconnect_Timeout in RTserver controls the maximum amount of"
+"time (in seconds) RTclient has to reconnect. If RTclient does not reconnect"
+"to RTserver within Client_Reconnect_Timeout seconds, then RTserver"
+"will clear the guaranteed messages that have not been acknowledged by"
+"this RTclient process and send a GMD_NACK message back to the sender of"
+"these messages."
+""
+"Setting the option to gmd_failure is useful for short-lived"
+"operation. In this mode, RTserver will clear the guaranteed messages"
+"that have not been acknowledged by this RTclient process and send a"
+"GMD_NACK message back to the sender of these messages."
+""
+"Setting the option to gmd_success is useful for short-lived operation"
+"or when RTclient wants to exit cleanly without causing GMD failure in the"
+"sending process. In this mode, RTserver will clear the guaranteed"
+"messages that have not been acknowledged by this RTclient process and"
+"send a GMD_ACK message back to the sender of these messages."
+""
+"This option is required and cannot be unset."
+" "
+"Type: Identifier"
+"Default: none"
+" "
+
+SERVER_GMD_DIR_NAME
+
+/* synopsis */
+"Server_Gmd_Dir_Name: GMD area sub-directory for message files"
+
+/* detailed help */
+" "
+"Server_Gmd_Dir_Name specifies an alternate GMD area sub-directory for"
+"message files. The default GMD area sub-directory is the connection's"
+"unique subject. However, when an RTprocess has multiple connections"
+"using the same unique subject but to different RTserver clouds then"
+"file conflicts will occur. In this case the Server_Gmd_Dir_Name must"
+"be set for each connection."
+" "
+"Type: String"
+"Default: None"
+" "
+
+SERVER_GMD_FILE_NAME
+
+/* synopsis */
+"Server_Gmd_File_Name: GMD area file name for message files"
+
+/* detailed help */
+" "
+"Server_Gmd_File_Name specifies an alternate GMD area file name for"
+"message files. The default GMD area file name is the connection's"
+"project name. However, when an RTprocess has multiple connections"
+"using the same unique subject and project but to different RTserver"
+"clouds then file conflicts will occur. In this case the"
+"Server_Gmd_File_Name must be set for each connection."
+" "
+"Type: String"
+"Default: None"
+" "
+
+SERVER_KEEP_ALIVE_TIMEOUT
+
+/* synopsis */
+"Server_Keep_Alive_Timeout: how long to wait for keep alive from RTserver connection"
+
+/* detailed help */
+" "
+"Server_Keep_Alive_Timeout specifies how long (in seconds) to wait"
+"when checking if the connection to RTserver is still alive."
+"This check is called a keep alive, and occurs if more than"
+"Server_Read_Timeout seconds have elapsed since the process last"
+"read any data from RTserver. Keep alives are disabled if"
+"Server_Keep_Alive_Timeout is set to 0.0. If the keep alive fails,"
+"the connection to RTserver is destroyed, and the process attempts" 
+"to create a new connection to RTserver. The larger the value for"
+"Server_Keep_Alive_Timeout, the longer the process must wait to"
+"detect a possible RTserver failure. If Server_Keep_Alive_Timeout"
+"is set too low, however, the process may mistakenly think that it"
+"has lost its connection to RTserver when RTserver is merely very busy."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: Numeric	"
+"Default: 5.0 (seconds)"
+" "
+
+SERVER_MAX_RECONNECT_DELAY
+
+/* synopsis */
+"Server_Max_Reconnect_Delay: upper bound on random delay before a reconnect to an RTserver is attempted"
+
+/* detailed help */
+" " 
+"Server_Max_Reconnect_Delay specifies the upper bound on a random delay"
+"introduced when a process has to reconnect to an RTserver."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: Numeric	 "
+"Default: 30.0 (seconds)"
+" "
+
+SERVER_MSG_SEND
+
+/* synopsis */
+"Server_Msg_Send: specifies whether or not process can send messages to RTserver"
+
+/* detailed help */
+" " 
+"Server_Msg_Send specifies whether or not a process can send messages"
+"to RTserver. Some messages sent internally by the RTworks IPC library,"
+"such as DG_SET_RECV messages, are always sent regardless of the"
+"setting of Server_Msg_Send. This option is useful for backup processes"
+"that should receive messages from RTserver but not send any out."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: Boolean	 "
+"Default: TRUE"
+" "
+
+SERVER_NAMES
+
+/* synopsis */
+"Server_Names: logical connection names used to find and start RTserver"
+
+/* detailed help */
+" "
+"Server_Names specifies a list of logical connection names used to"
+"find and start RTserver. Each logical connection name has the form"
+"protocol:node:address, which can be shortened to protocol:node,"
+"protocol, or node."
+" "
+"This option is required and cannot be unset."
+ " "
+"Type: String List"
+"Default: _node"
+" "
+
+SERVER_READ_TIMEOUT
+
+/* synopsis */
+"Server_Read_Timeout: how often data is available for reading from RTserver"
+
+/* detailed help */
+" "
+"Server_Read_Timeout specifies how often (in seconds) data is"
+"expected to be available for reading on the connection to"
+"RTserver. This timeout is used to check for possible network"
+"failures. If a read timeout occurs, a message is sent to"
+"RTserver to check if the connection is still alive. This check"
+"is called a keep alive. Checking for read timeouts is disabled"
+"if Server_Read_Timeout is set to 0.0. The larger the value for "
+"Server_Read_Timeout, the longer the process must wait to detect"
+"a possible RTserver failure. If Server_Read_Timeout is set too"
+"low, however, the process may mistakenly think that it has lost"
+"its connection to RTserver when RTserver is merely very busy."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric	 "
+"Default: 30.0 (seconds)"
+" "
+
+SERVER_START_DELAY
+
+/* synopsis */
+"Server_Start_Delay: how long process sleeps between traversals of names in Server_Names"
+
+/* detailed help */
+" "
+"Server_Start_Delay specifies how long (in seconds) a process sleeps"
+"between traversals of each connection name listed in the Server_Names"
+"option. This option can be used to control the number of processes"
+"that attempt to start RTserver and the rate that these attempts occur."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: Numeric	 "
+"Default: 1.0 (second)"
+" "
+
+SERVER_START_MAX_TRIES
+
+/* synopsis */
+"Server_Start_Max_Tries: how many times to traverse each connection name in Server_Names"
+
+/* detailed help */
+" "
+"Server_Start_Max_Tries specifies how many times to traverse each"
+"connection name in the Server_Names option attempting to find and"
+"start RTserver. The process is not able to communicate with other"
+"RTworks processes if it cannot create a connection to RTserver."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: Numeric	 "
+"Default: 1"
+" "
+
+SERVER_START_TIMEOUT
+
+/* synopsis */
+"Server_Start_Timeout: max time process waits for RTserver to finish initializing"
+
+/* detailed help */
+" "
+"Server_Start_Timeout specifies the maximum amount of time (in seconds)"
+"a process waits for RTserver to finish initializing once the process"
+"has started RTserver. If RTserver does not finish initializing within"
+"the timeout period, the process tries the next connection name in the"
+"Server_Names option."
+" "
+"This option is required and cannot be unset. "
+" "
+"Type: Numeric	 "
+"Default: 30.0 (seconds)"
+" "
+
+SERVER_WRITE_TIMEOUT
+
+/* synopsis */
+"Server_Write_Timeout: how often data is expected to be written to RTserver"
+
+/* detailed help */
+" "
+"Server_Write_Timeout specifies how often (in seconds) data is expected to"
+"be able to be written to the connection to RTserver. This timeout is used"
+"to check for possible network failures. If a write timeout occurs, the"
+"connection to RTserver is destroyed, and the process attempts to create"
+"a new connection to RTserver. Checking for write timeouts is disabled if"
+"Server_Write_Timeout is set to 0.0. The larger the value for "
+"Server_Write_Timeout, the longer the process must wait to detect a "
+"possible RTserver failure. If Server_Write_Timeout is set too low, however,"
+"the process may mistakenly think that it has lost its connection to "
+"RTserver when RTserver is merely very busy."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric	 "
+"Default: 30.0 (seconds)"
+" "
+
+SNA_CPIC_LIB
+
+/* synopsis */
+"Sna_Cpic_Lib: name of the SNA CPIC library"
+
+/* detailed help */
+" "
+"Name of the SNA CPIC library that contains the CPIC functions."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: String	 "
+"Default: wcpic32.dll (Windows)"
+"         liblu62.so (UNIX)"
+"         libcpic_r.o (AIX)"
+"         MVS.o (MVS)"
+" "
+
+SNA_SERVER_NODE
+
+/* synopsis */
+"Sna_Server_Node: node name on which to open a channel"
+
+/* detailed help */
+" "
+"Name of the node on which to open a channel."
+" "
+"Type: String	 "
+"Default: _node"
+" "
+
+SOCKET_CONNECT_TIMEOUT
+
+/* synopsis */
+"Socket_Connect_Timeout: max time process waits when creating a client socket connected to a server"
+
+/* detailed help */
+" "
+"Socket_Connect_Timeout specifies the maximum amount of time"
+"(in seconds) the process waits when trying to create a client"
+"socket connected to a server proces. This timeout is used to"
+"check for possible network failures. Checking for connect"
+"timeouts is disabled if Socket_Connect_Timeout is set to 0.0."
+"All RTworks standard processes use sockets for interprocess"
+"communication."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric"
+"Default: 5.0 (seconds)"
+" "
+
+SRV_CLIENT_NAMES_MIN_MSGS
+
+/* synopsis */
+"Srv_Client_Names_Min_Msgs: minimize client names watch messages"
+
+/* detailed help */
+"       "
+"The Srv_Client_Names_Min_Msgs option is an RTserver only option to reduce"
+"the number of messages received from watching client names.  If option is"
+"set to true, then the client names status callback will send a message with"
+"all the clients, not one at a time."
+"      "
+"Type: Boolean"
+"Default: false"
+"       "
+
+SRV_SUBJ_NAMES_MIN_MSGS
+
+/* synopsis */
+"Srv_Subj_Names_Min_Msgs: minimize subject names watch messages"
+
+/* detailed help */
+"       "
+"The Srv_Subj_Names_Min_Msgs option is an RTserver only option to reduce"
+"the number of messages received from watching subject names.  If option is"
+"set to true, then the subject names status callback will send a message with"
+"all the subjects, not one at a time."
+"      "
+"Type: Boolean"
+"Default: false"
+"       "
+
+SSL_CERT_CB
+
+/* synopsis */
+"Ssl_Cert_Cb: name of user-defined certificate verification callback library"
+
+/* detailed help */
+"       "
+"Ssl_Cert_Cb adds a user-defined certificate verification callback to the"
+"SSL handshake by specifying the library containing the callback function."
+"The callback allows an application to either accept or reject a peer's"
+"certificate. The verification is performed in conjunction with the standard"
+"SSL certificate verification."
+"      "
+"Type: String"
+"Default: None"
+"       "
+
+SSL_CIPHER_SUITES
+
+/* synopsis */
+"Ssl_Cipher_Suites: list of cipher suits to use"
+
+/* detailed help */
+"       "
+"Ssl_Cipher_Suites specifies the list of cipher suites to be used for SSL."
+"If certificates with keys other than RSA are being used, additional cipher"
+"suites must be specified."
+"      "
+"Type: Identifier list (values separated by commas)"
+"Default: SSL_RSA_WITH_RC4_128_MD5, SSL_RSA_EXPORT_WITH_RC4_40_MD5"
+"       "
+
+SSL_CLIENT_AUTH
+
+/* synopsis */
+"Ssl_Client_Auth: used to control client authentication rules"
+
+/* detailed help */
+"       "
+"Ssl_Client_Auth controls client authentication by the server. The client"
+"always authenticates the server, but the server may choose whether to"
+"authenticate the client. By default, any process accepting a connection,"
+"such as RTserver, does not authenticate the connecting peer. If the client's"
+"certificate is to be authenticated by the server, set this option to require."
+"      "
+"Valid values for this option are:"
+"     none - no client authentication is required"
+"     request - server requests a certificate, but does not require one"
+"     require - client authentication is required"
+"      "
+"Type: Identifier"
+"Default: none"
+"       "
+
+SSL_CRL_POLICY
+
+/* synopsis */
+"Ssl_Crl_Policy: used to control the CRL policy"
+
+/* detailed help */
+"       "
+"Ssl_Crl_Policy indicates what CRL policy decisions need to be made:"
+"     none    - no CRL checking is performed"
+"     full    - no connections are allowed if CRL has expired"
+"     partial - connections are allowed if CRL has expired"
+"      "
+"Type: Identifier"
+"Default: none"
+"       "
+
+SSL_HANDSHAKE_TIMEOUT
+
+/* synopsis */
+"Ssl_Handshake_Timeout: max time process waits for SSL handshake to complete"
+
+/* detailed help */
+"       "
+"Ssl_Handshake_Timeout defines the total number of seconds to wait for the"
+"SSL handshake to complete."
+"      "
+"Type: Numeric"
+"Default: 10.0 (seconds)"
+"       "
+
+SSL_MAX_RECORD_LENGTH
+
+/* synopsis */
+"Ssl_Max_Record_Length: maximum record length sent"
+
+/* detailed help */
+"       "
+"Ssl_Max_Record_Length constrains the amount of data encrypted and sent"
+"at one time. This option can be used to provide smooth communication"
+"between processes that reside in a constrained environment."
+"      "
+"Type: Numeric"
+"Default: None"
+"       "
+
+SSL_PASSWORD
+
+/* synopsis */
+"Ssl_Password: the encrypted private key's password"
+
+/* detailed help */
+"       "
+"Ssl_Password is the password of the private key foundin identity.db (the"
+"password supplied when the certificate request was created)."
+"      "
+"Type: String"
+"Default: None"
+"       "
+
+SSL_ROSETTA_PIN
+
+/* synopsis */
+"Ssl_Rosetta_Pin: the Rosetta Smartcard PIN number"
+
+/* detailed help */
+"       "
+"Ssl_Rosetta_Pin contains the Rosetta Smartcard PIN number."
+"      "
+"Type: String"
+"Default: None"
+"       "
+
+SSL_STORE_DIR
+
+/* synopsis */
+"Ssl_Store_Dir: directory containing the trust store"
+
+/* detailed help */
+"       "
+"Ssl_Store_Dir contains the name of the directory in which to find the trust"
+"store files identity.db, trusted.db, and crls.db."
+"      "
+"Type: String"
+"Default: ."
+"       "
+
+SSL_TRACE_FILE
+
+/* synopsis */
+"Ssl_Trace_File: filename used for SSL trace output"
+
+/* detailed help */
+"       "
+"Ssl_Trace_File is the filename used for SSL tracing information. See"
+"option Trace_File for more information."
+"      "
+"Type: String"
+"Default: ssl.log"
+"       "
+
+SSL_TRACE_LEVEL
+
+/* synopsis */
+"Ssl_Trace_Level: trace level for SSL output"
+
+/* detailed help */
+"       "
+"Ssl_Trace_Level controls the trace level for output to the SSL trace file."
+"See option Trace_Level for more information."
+"      "
+"Type: Identifier"
+"Default: warning"
+"       "
+
+SSL_VERSION
+
+/* synopsis */
+"Ssl_Version: SSL protocol version"
+
+/* detailed help */
+"       "
+"Ssl_Version specifies the SSL protocol version to use. All processes"
+"communicating with one another must be using compatible protocols. The"
+"valid version are:"
+"     tls_1_only            - both SSL Hello and communication will use TLS 1.0"
+"     tls_1_or_ssl_3        - supports both TLS 1.0 and SSL 3.0"
+"     ssl_3_only            - both SSL Hello and communication will use SSL 3.0"
+"     ssl_3_or_ssl_2        - supports both SSL 3.0 and SSL 2.0"
+"     ssl3_with_ssl_2_hello - SSL 2.0 Hello and SSL 3.0 communication"
+"      "
+"Type: Identifier"
+"Default: ssl_3_only"
+"       "
+
+SUBJECTS
+
+/* synopsis */
+"Subjects: sets of messages received by the process"
+
+/* detailed help */
+"       "
+"Subjects specifies which sets of messages the process"
+"receives from RTserver. More than one subject can be"
+"specified. Multiple subjects should be separated by"
+"commas (e.g., \"setopt subject eps,pcs,therm\")."
+"      "
+"Type: Identifier list (values separated by commas)"
+"Default: None"
+"       "
+
+TIME_FORMAT
+
+/* synopsis */
+"Time_Format: how process displays time"
+
+/* detailed help */
+"       "
+"Time_Format controls how a process displays the value of time."
+"Five standard formats are possible:"
+"     full - displays a combination of the date and time"
+"     fullzone - displays a combination of the date and time with a time zone designation"
+"     hms - displays the time in hours, minutes, and seconds"
+"     numeric - displays the floating point representation of time"
+"     <user_defined> - uses a user-defined time converter"
+"   "
+"Type: Identifier"
+"Default: hms"
+"     "
+
+TRACE_FILE
+
+/* synopsis */
+"Trace_File: output filename for trace information"
+
+/* detailed help */
+"       "
+"Trace_File specifies the name of a file to which the process should write"
+"trace information. A value of stdout or stderr is allowed. If the option"
+"is not set then output will be written to stdout. Prepending the filename"
+"with @ will cause new processes to append their output to the file rather"
+"than overwritting it."
+"   "
+"Type: String"
+"Default: None"
+"     "
+
+TRACE_FILE_SIZE
+
+/* synopsis */
+"Trace_File_Size: maximum file size for Trace_File"
+
+/* detailed help */
+"       "
+"Trace_File_Size specifies the maximum file size for Trace_File. Once the"
+"file reaches Trace_File_Size it is backed up according to the rules of the"
+"Backup_Name option and a new file is created. This option allows a process"
+"to run indefinitely without having the disk be filled by a Trace_File."
+"   "
+"Type: Numeric"
+"Default: None"
+"     "
+
+TRACE_FLAGS
+
+/* synopsis */
+"Trace_Flags: used to set trace flags"
+
+/* detailed help */
+"       "
+"Trace_Flags specifies how to format the trace output. The available"
+"flags are:"
+"     prefix    - indicates from which module the output orginates"
+"     timestamp - prepends the output with a timestamp"
+"   "
+"Multiple flags may be specified by setting the option to a comma seperated"
+"list. The format of the timestamp is influenced by the value of the"
+"Time_Format option."
+"   "
+"Setting the option to unknown or unsetting the option using the unsetopt"
+"command will clear all flags."
+"   "
+"Type: String List"
+"Default: prefix"
+"     "
+
+TRACE_LEVEL
+
+/* synopsis */
+"Trace_Level: sets the amount of trace information output"
+
+/* detailed help */
+"       "
+"Trace_Level specifies the amount of trace information output to the trace"
+"file. The valid Trace_Level values are:" 
+"     never"
+"     error"
+"     warning"
+"     info"
+"     verbose"
+"     debug"
+"   "
+"Type: Identifier"
+"Default: warning"
+"     "
+
+UDP_BROADCAST_TIMEOUT
+
+/* synopsis */
+"Udp_Broadcast_Timeout: max time process waits for RTserver to respond to broadcast"
+
+/* detailed help */
+" "
+"Udp_Broadcast_Timeout specifies the maximum amount of time (in seconds)"
+"a process should wait for an RTserver to respond to its broadcast attempt"
+"to find a running RTserver. If no RTserver responds within the timeout"
+"period, the process tries the next connection name in the Server_Names"
+"option."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Numeric	 "
+"Default: 5.0 (seconds)"
+" "
+
+UNIQUE_SUBJECT
+
+/* synopsis */
+"Unique_Subject: unique subject process automatically receives when connected to RTserver"
+
+/* detailed help */
+" "
+"Unique_Subject specifies a unique subject that a process" 
+"automatically starts receiving when it creates a connection to"
+"RTserver. RTserver does not allow multiple processes to have the"
+"same value for this option. The default value is _<Node><Pid>,"
+"where <Node> is the network node name of the computer on which"
+"the process is running, and <Pid> is the operating system process"
+"identifier of the process."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Identifier"
+"Default: _NodePid"
+" "
+
+VARIABLE_FILTER
+
+/* synopsis */
+"Variable_Filter: what variables to load from variable table"
+
+/* detailed help */
+" "
+"Variable_Filter specifies a logical expression (in the syntax"
+"of the underlying DBMS driver) that indicates which variables"
+"to load from the variable table. This allows a partial loading"
+"of the variable table. If Variable_Filter has no value, the"
+"process loads all variables."
+" "
+"The rtsdb driver expects this expression to be in the syntax of"
+"record selection expressions (e.g., \"subjects like \\\"thermal\\\"\")."
+" "
+"Type: String"
+"Default: None"
+" "
+
+VARIABLE_TABLE
+
+/* synopsis */
+"Variable_Table: file name of the RTworks variable table"
+
+/* detailed help */
+" "
+"Variable_Table specifies the filename of the RTworks variable"
+"table."
+" "
+"If no file extension is provided, the rtsdb driver uses a value"
+"of .sdb by default. Read and write access to this file and the"
+"directory in which it resides is required in order to run the"
+"process. "
+" "
+"Type: String "
+"Default: sensor.sdb"
+" "
+
+VERBOSE
+
+/* synopsis */
+"Verbose: enables verbose output"
+
+/* detailed help */
+" "
+"If Verbose is set to TRUE, more detailed or verbose information will be"
+"output."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Boolean "
+"Default: false"
+" "
+
+WEB_HTTP_VERSION
+
+/* synopsis */
+"Web_Http_Version: the HTTP version to use"
+
+/* detailed help */
+" "
+"The Web_Http_Version option specifies the HTTP version used by the RTprocess."
+"By default, HTTP/1.1 is used. Some web servers might not implement the HTTP"
+"version 1.1 protocol requiring the setting of this option to HTTP/1.0."
+" "
+"Type: String "
+"Default: HTTP/1.1"
+" "
+
+WEB_HTTPS_SSL_NAME
+
+/* synopsis */
+"Web_Https_Ssl_Name: the underlying protocol to use with HTTPS"
+
+/* detailed help */
+" "
+"The Web_Https_Ssl_Name option specifies the underlying protocol to use when"
+"using HTTPS."
+" "
+"Type: String "
+"Default: ssl"
+" "
+
+WEB_PASSWORD
+
+/* synopsis */
+"Web_Password: password used for server authorization"
+
+/* detailed help */
+" "
+"The Web_Password option specifies the password used if the web server requires"
+"username/password authorization."
+" "
+"Type: String "
+"Default: None"
+" "
+
+WEB_TIMEOUT
+
+/* synopsis */
+"Web_Timeout: max time process waits for an HTTP response from the web server"
+
+/* detailed help */
+" "
+"The Web_Timeout option specifies how long to wait for an HTTP response from"
+"the web server."
+" "
+"Type: Numeric "
+"Default: -1.0 (timeout forever)"
+" "
+
+WEB_TRACE_FILE
+
+/* synopsis */
+"Web_Trace_File: filename used for HTTP trace output"
+
+/* detailed help */
+"       "
+"Web_Trace_File is the filename used for HTTP tracing information. See"
+"option Trace_File for more information."
+"      "
+"Type: String"
+"Default: http.log"
+"       "
+
+WEB_TRACE_LEVEL
+
+/* synopsis */
+"Web_Trace_Level: trace level for HTTP output"
+
+/* detailed help */
+"       "
+"Web_Trace_Level controls the trace level for output to the HTTP trace file."
+"See option Trace_Level for more information."
+"      "
+"Type: Identifier"
+"Default: warning"
+"       "
+" "
+
+WEB_URL
+
+/* synopsis */
+"Web_Url: the URL to use when connecting to a web server"
+
+/* detailed help */
+" "
+"The Web_Url option specifies the URL to which the RTprocess connects."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: String "
+"Default: /talarian/rtserver"
+" "
+
+WEB_URL_ENCODE
+
+/* synopsis */
+"Web_Url_Encode: whether HTTP traffic is URL encoded"
+
+/* detailed help */
+" "
+"The Web_Url_Encode option specifies whether the HTTP traffic is URL encoded."
+"Setting the valud to false (no encoding) produces the best performance."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Boolean "
+"Default: false"
+" "
+
+WEB_USERNAME
+
+/* synopsis */
+"Web_Username: username used for server authorization"
+
+/* detailed help */
+" "
+"The Web_Username option specifies the username used if the web server requires"
+"username/password authorization."
+" "
+"Type: String "
+"Default: None"
+" "

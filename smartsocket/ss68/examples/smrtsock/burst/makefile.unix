@@ -1,0 +1,21 @@
+#
+# Copyright (c) 1991-2006 TIBCO Software Inc.
+# All rights reserved.
+# For more information, please contact:
+# TIBCO Software Inc., Palo Alto, California, USA
+#
+# $Id: //dev/packages/examples/ss/dev/68/src/c/burst/makefile.unix#1 $
+#
+
+OBJS = burst.o
+
+SRCS = $(OBJS:.o=.c)
+
+shared: burst.o
+	ld -G -z text -o librtipcburst.so burst.o
+
+burst.o: burst.c
+	rtlink -c -I. -I/$(RTHOME)/include -I$(HOME)/include -I/usr/dt/include -I/usr/openwin/include -Xc -Dunix -Dsun -Dsparc -D_REENTRANT       -Kpic -g burst.c -o burst.o
+
+clean:
+	rm *.obj *.o *.ilk  *.pdb *.exp

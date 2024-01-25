@@ -1,0 +1,48 @@
+/* --------------------------------------------------------------- */
+/* COPYRIGHT, 1991-2000 TALARIAN CORPORATION. ALL RIGHTS RESERVED. */
+/* UNPUBLISHED -- RIGHTS RESERVED UNDER THE COPYRIGHT LAWS OF      */
+/* THE UNITED STATES. USE OF A COPYRIGHT NOTICE IS PRECAUTIONARY   */
+/* ONLY AND DOES NOT IMPLY PUBLICATION OR DISCLOSURE.              */
+/*                                                                 */
+/* THIS DOCUMENTATION CONTAINS PROPRIETARY AND CONFIDENTIAL        */
+/* INFORMATION OF TALARIAN CORPORATION. USE, DISCLOSURE, OR        */
+/* REPRODUCTION IS PROHIBITED WITHOUT THE PRIOR EXPRESS WRITTEN    */
+/* PERMISSION OF TALARIAN CORPORATION.                             */
+/*                                                                 */
+/*                   RESTRICTED RIGHTS LEGEND                      */
+/*                                                                 */
+/* Use, duplication, or disclosure by the Government is subject    */
+/* to restrictions set forth in subparagraph (c)(1)(ii) of the     */
+/* rights in Technical Data and Computer Software clause at        */
+/* DFARS 252.227-7013.                                             */
+/*                     Talarian Corporation                        */
+/*             333 Distel Circle, Los Altos, CA 94022              */
+/* --------------------------------------------------------------- */
+
+/* mon_opt.hlp */
+
+/* $Header: /home/rtworks/cvsroot/src/help/lm_opt.hlp,v 1.2 1997/01/03 02:04:46 scott Exp $ */
+
+COMPAT_35_ASTERISK
+
+/* synopsis */
+"Compat_35_Asterisk: whether or not asterisk parameter operates like it did in Version 3.5"
+/* detailed help */
+" "
+"The Compat_35_Asterisk option specifies whether or not the asterisk"
+"character (\"*\") should work the same as it did in Version 3.5 in the"
+"poll, unwatch, and watch commands.  In Version 3.5 these commands"
+"allowed a parameter of * to mean all items of a certain type (e.g.,"
+"all RTclients, all subjects, all RTservers, etc.). The * character is"
+"now instead used as a wildcard for publish-subscribe, and in its place"
+"the @ character is used as a parameter to indicate all items which"
+"match the Monitor_Scope filter (see MONITOR_SCOPE for more"
+"details). If Compat_35_Asterisk is set to TRUE, then RTmon converts a"
+"parameter of * to @, which is useful for customers migrating"
+"applications from Version 3.5."
+" "
+"This option is required and cannot be unset."
+" "
+"Type: Boolean"
+"Default: TRUE"
+" "

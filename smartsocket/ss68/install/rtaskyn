@@ -1,0 +1,34 @@
+:
+
+#
+# Copyright (c) 1991-2006 TIBCO Software Inc.
+# All rights reserved.
+# For more information, please contact:
+# TIBCO Software Inc., Palo Alto, California, USA
+#
+# $Id: //dev/packages/build/dev/68/src/scripts/rtaskyn.sh#1 $
+#
+
+# rtaskyn -- ask a yes/no question.
+# $1 = question
+# Return 0 for yes, and 1 for no.
+#
+#
+
+answer=y
+rtprompt "$1 [y]: "
+read answer
+until [ ];
+do
+  case "$answer" in
+    [Yy] ) exit 0
+            ;;
+    "" ) exit 0
+            ;;
+    [Nn] ) exit 1
+            ;;
+  esac
+  echo "Please type y or n."
+  rtprompt "$1 [y]: "
+  read answer
+done

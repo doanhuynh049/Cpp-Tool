@@ -1,0 +1,13 @@
+/* Copyright (c) 1991-2006 TIBCO Software Inc. */
+/* All rights reserved. */
+/* For more information, please contact: */
+/* TIBCO Software Inc., Palo Alto, California, USA */
+/**/
+/* $Id: //dev/packages/tmc/dev/68/src/standard/mcastopt.cm#1 $ */
+
+/* ------------------------------------------- */
+/* MCAST specific options that must be created */
+/* This file belongs in $RTHOME/standard       */
+/* ------------------------------------------- */
+
+createopt mcast_cm_file string $RTHOME/standard/mcast.cm

@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 1991-2006 TIBCO Software Inc.
+ * All rights reserved.
+ * For more information, please contact:
+ * TIBCO Software Inc., Palo Alto, California, USA
+ *
+ * $Id: //dev/packages/examples/ss/dev/68/src/c/tutorial/README#1 $
+ */
+
+This directory and below contains the example programs which are
+described in the SmartSockets Tutorial. Each of the directories:
+lesson1, lesson2, ..., lesson6 contain the example programs for
+that particular lesson.

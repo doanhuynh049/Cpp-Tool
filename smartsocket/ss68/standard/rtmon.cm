@@ -1,0 +1,27 @@
+/* Copyright (c) 1991-2006 TIBCO Software Inc. */
+/* All rights reserved. */
+/* For more information, please contact: */
+/* TIBCO Software Inc., Palo Alto, California, USA */
+/**/
+/* $Id: //dev/packages/tmi/dev/68/src/standard/rtmon.cm#1 $ */
+
+/* ----------------------------------------------- */
+/* rtmon.cm -- defaults for RTmon options */
+/* ----------------------------------------------- */
+
+
+/* ------------------------------------------------------------------ */
+/* This file is loaded BEFORE rtmon.cm in the home directory and */
+/* current directory.                                                 */
+/* ------------------------------------------------------------------ */
+
+/* ---------------------------------- */
+/* Generic options for all processes. */
+/* ---------------------------------- */
+setopt prompt           "MON> "
+setopt time_format      hms
+
+/* -------------------------- */
+/* RTmon-specific options */
+/* -------------------------- */
+/* none yet */

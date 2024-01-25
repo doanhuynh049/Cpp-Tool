@@ -1,0 +1,42 @@
+/*
+ * Copyright (c) 1991-2006 TIBCO Software Inc.
+ * All rights reserved.
+ * For more information, please contact:
+ * TIBCO Software Inc., Palo Alto, California, USA
+ *
+ * $Id: //dev/packages/examples/ss/dev/68/src/sscpp/README#1 $
+ */
+
+README for SmartSockets C++ Class Library examples
+
+1.  conn_clt.cxx -- sample program showing the client side of a peer-to-peer
+    connection. The example also show how connection callbacks are used to
+    process messages.  conn_srv.cxx is the server program for this example.
+
+2.  conn_srv.cxx -- sample program showing the server side of a peer-to-peer
+    connection. The example also show how connection callbacks are used to
+    process messages.  conn_clt.cxx is the client program for this example.
+
+3.  mon.cxx -- sample program using TipcMon to do IPC monitoring.
+
+4.  msg1.cxx -- example program using Append and Next TipcMsg class member
+    functions to build a message.
+
+5.  msg2.cxx -- example program using insertion and extraction operators
+    of the TipcMsg class to build a message.
+
+6.  rcvr.cxx -- simple example program showing one end of a peer-to-peer
+    connection.  sndr.cxx shows the other end of the connection.
+
+6.  rcvrcb.cxx -- simple example program showing one end of a peer-to-peer
+    connection, using callbacks. sndr.cxx shows the other end of the 
+	connection.
+
+7.  rtcltrcv.cxx -- example program using RTserver and subjects to receive 
+    messages from rtcltsnd.cxx
+
+8.  rtcltsnd.cxx -- example program using RTserver and subjects to send
+    message to rtcltrcv.cxx.
+
+9. sndr.cxx -- simple example program showing one end of a peer-to-peer
+    connection.  rcvr.cxx shows the other end of the connection.

@@ -1,0 +1,535 @@
+:
+
+#
+# Copyright (c) 1991-2009 TIBCO Software Inc.
+# All rights reserved.
+# For more information, please contact:
+# TIBCO Software Inc., Palo Alto, California, USA
+#
+# $Id: $
+#
+
+PATH=./bin:./install:/usr/ucb:/usr/bsd:/usr/bin:/bin ; export PATH
+
+askyn() {
+  answer=y
+  printf "$1 [y]: "
+  read answer
+  until [ ];
+  do
+    case "$answer" in
+      [Yy] ) return 0
+              ;;
+      "" ) return 0
+              ;;
+      [Nn] ) return 1
+              ;;
+    esac
+    echo "Please type y or n."
+    printf "$1 [y]: "
+    read answer
+  done
+}
+
+
+#
+# Install TIBCO SmartSockets 6.8.2
+#
+
+echo ""
+echo ""
+echo "Welcome to the Installation Script for TIBCO SmartSockets 6.8.2"
+echo ""
+echo "When this script asks you questions, a default answer"
+echo "is shown in brackets next to the question.  To use the"
+echo "default answer, press <Return> in response to the question."
+echo "Otherwise, type one of the other suggested responses and"
+echo "then press <Return>."
+echo ""
+echo "This script will ask all its questions first, and then"
+echo "execute the actions you select."
+echo ""
+
+
+askyn "Would you like to continue?"
+
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+more <<EOF
+
+TIBCO Software Inc. End User License Agreement
+
+READ  THIS  END  USER LICENSE AGREEMENT CAREFULLY. BY DOWNLOADING OR INSTALLING
+THE SOFTWARE, YOU AGREE TO BE BOUND BY THIS AGREEMENT. IF YOU DO NOT  AGREE  TO
+THESE  TERMS, DO NOT DOWNLOAD OR INSTALL THE SOFTWARE AND RETURN IT TO THE VEN-
+DOR FROM WHICH IT WAS PURCHASED.
+
+Upon your acceptance as indicated above, the following shall govern your use of
+the  Software  except  to  the extent all or any portion of the Software (a) is
+subject to a separate written agreement, or (b) is provided by  a  third  party
+under  the terms set forth in an Addenda at the end of this Agreement, in which
+case the terms of such addenda shall control over inconsistent terms  with  re-
+gard to such portion(s).
+
+License  Grant.   The Software is the property of TIBCO or its licensors and is
+protected by copyright and other laws. While TIBCO continues to own  the  Soft-
+ware,  TIBCO  hereby grants to Customer a limited, non-transferable, non-exclu-
+sive, license to use the Number of Units set forth  in  the  Ordering  Document
+solely for Customer's internal business use.
+
+License  Term.   The term of each license for the Software shall be either per-
+petual or on a term limited basis as set forth in the Ordering Document. If li-
+censed  on  a term limited basis, the term shall be for a period of three years
+commencing on the Purchase Date, and on expiration, Customer must  cease  using
+and return or destroy all copies of the Software.
+
+Restrictions.   Customer  agrees not to (a) make more copies than the Number of
+Units (except for a reasonable number of copies for archival and  disaster  re-
+covery  purposes)  or  use any unlicensed versions of the Software; (b) provide
+access to the Software to anyone other than employees, contractors, or  consul-
+tants  under  written  contract  with Customer agreeing to be bound by terms at
+least as protective of TIBCO as those in this End User License Agreement  ("Au-
+thorized  Users");  (c)  sublicense,  transfer, assign, distribute to any third
+party, pledge, lease, rent, or commercially share the Software or any  of  Cus-
+tomer's rights under this Agreement (for the purposes of the foregoing a change
+in control of Customer is deemed to be an assignment); (d) use the Software for
+purposes  of providing a service bureau, including, without limitation, provid-
+ing third-party hosting, or third-party application integration or  application
+service  provider-type  services, or any similar services; (e) use the Software
+in connection with ultrahazardous activities, or any activity for which failure
+of the Software might result in death or serious bodily injury to Customer or a
+third party; or (f) directly or indirectly, in whole or in part, modify, trans-
+late, reverse engineer, decrypt, decompile, disassemble, make error corrections
+to, create derivative works based on, or  otherwise  attempt  to  discover  the
+source code or underlying ideas or algorithms of the Software. Customer may en-
+gage in such conduct as is necessary to  ensure  the  interoperability  of  the
+Software  as  required by law, provided that prior to commencing any decompila-
+tion or reverse engineering of any Software, Customer agrees to  it  shall  ob-
+serve  strict  obligations  of confidentiality and provide TIBCO reasonable ad-
+vance written notice and the opportunity to assist with and/or conduct such ac-
+tivity  on Customer's behalf and at Customer's expense; and (g) notwithstanding
+the method of delivery of the Software, the scope of the licenses granted under
+this  Agreement  are  limited to the Software as set forth in an Ordering Docu-
+ment.
+
+Beta and Evaluation Licenses.  Notwithstanding the foregoing, if  the  Software
+is being provided for demonstration, beta testing, or evaluation purposes, then
+Customer agrees (a) to use the Software solely for such purposes, (b) that  the
+Software  will  not be used or deployed in a production or development environ-
+ment, and (c) that such use shall automatically terminate upon the  earlier  of
+thirty  days from the date Customer receives the right to install the Software,
+or Customer's receipt of notice of termination from TIBCO.
+
+Maintenance.  Maintenance, if ordered, including first year and all  subsequent
+years,  is  provided  under  the  policies set forth in the Maintenance Program
+Guide in effect at the time Maintenance services are provided. The policies set
+forth  in  the  Maintenance  Program Guide, incorporated in this Agreement, are
+subject to change at TIBCO's discretion; however the level of Maintenance  ser-
+vice  provided  by  TIBCO  will not be materially reduced during the period for
+which Maintenance fees have been paid by Customer. The current version  of  the
+Maintenance Program Guide can be accessed at http://www.tibco.com/services/sup-
+port/default.jsp. To receive Maintenance, all Software  must  be  properly  li-
+censed  and  annual  Maintenance  fees paid. TIBCO is not obligated to continue
+providing Maintenance if annual Maintenance fees have not been paid.
+
+Services.  Customer may request additional services ("Services") either  in  an
+Ordering  Document, or by a separate mutually executed work order, statement of
+work or other work-request document incorporating the term of this End User Li-
+cense Agreement (each, a "Work Order"). Unless otherwise expressly agreed to in
+a Work Order, all Services and any work product therefrom  shall  be  (a)  per-
+formed  on  a  time and materials basis, plus meals, lodging, travel, and other
+expenses reasonably incurred in connection therewith, (b) deemed accepted  upon
+delivery,  and (c) exclusively owned by TIBCO (except for Confidential Informa-
+tion of Customer), including all right, title and intellectual property or oth-
+er  right or interest therein. Each Work Order is intended to constitute an in-
+dependent and distinct agreement of  the  parties,  notwithstanding  that  each
+shall  be  construed  to incorporate all applicable provisions of this End User
+License Agreement.
+
+Limited Warranty.  If Customer obtained the Software directly from TIBCO,  then
+TIBCO  warrants  that  for a period of thirty (30) days from the Purchase Date:
+(i) the media on which the Software is furnished will be free of defects in ma-
+terials  and  workmanship under normal use; and (ii) the Software will substan-
+tially conform to its Documentation. This limited warranty extends only to  the
+original  Customer  hereunder. Customer's sole and exclusive remedy and the en-
+tire liability of TIBCO and its licensors under this limited warranty will  be,
+at  TIBCO's option, repair, replacement, or refund of the Software and applica-
+ble Maintenance fees, in which event this End User License Agreement shall ter-
+minate upon refund thereof.
+
+This  warranty  does  not apply to any Software which (a) is licensed for beta,
+evaluation, testing or demonstration purposes for which TIBCO does not  receive
+a  license  fee, (b) has been altered or modified, except by TIBCO, (c) has not
+been installed, operated, repaired, or maintained in accordance  with  instruc-
+tions  supplied  by TIBCO, (d) has been subjected to abnormal physical or elec-
+trical stress, misuse, negligence, or accident, or (e) is used in violation  of
+any other term of this End User License Agreement. Customer agrees to pay TIBCO
+for any Maintenance or Services provided by TIBCO related to a  breach  of  the
+foregoing  on  a time, materials, travel, lodging and other reasonable expenses
+basis. If Customer obtained the Software from a TIBCO reseller or  distributor,
+the terms of any warranty shall be as provided by such reseller or distributor,
+and TIBCO provides Customer no warranty with respect to such Software.
+
+EXCEPT AS SPECIFIED IN THIS LIMITED WARRANTY,  THE  SOFTWARE,  MAINTENANCE  AND
+SERVICES  ARE  PROVIDED "AS IS", ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTA-
+TIONS, AND WARRANTIES INCLUDING, WITHOUT LIMITATION, ANY  IMPLIED  WARRANTY  OR
+CONDITION  OF  MERCHANTABILITY,  FITNESS FOR A PARTICULAR PURPOSE, NONINFRINGE-
+MENT, SATISFACTORY QUALITY OR ARISING FROM A COURSE OF DEALING, USAGE, OR TRADE
+PRACTICE,  ARE HEREBY EXCLUDED TO THE EXTENT ALLOWED BY APPLICABLE LAW. CERTAIN
+THIRD PARTY SOFTWARE MAY BE PROVIDED TO CUSTOMER ALONG WITH CERTAIN TIBCO SOFT-
+WARE AS AN ACCOMMODATION TO CUSTOMER. THIS THIRD PARTY SOFTWARE IS PROVIDED "AS
+IS". CUSTOMER MAY CHOOSE NOT TO USE THIRD PARTY SOFTWARE PROVIDED AS AN  ACCOM-
+MODATION  BY  TIBCO. NO WARRANTY IS MADE REGARDING THE RESULTS OF ANY SOFTWARE,
+MAINTENANCE OR SERVICES OR THAT THE SOFTWARE WILL OPERATE WITHOUT ERRORS, PROB-
+LEMS  OR INTERRUPTIONS, OR THAT ERRORS OR BUGS IN THE SOFTWARE WILL BE CORRECT-
+ED, OR THAT THE SOFTWARE'S FUNCTIONALITY, MAINTENANCE  OR  SERVICES  WILL  MEET
+CUSTOMER'S REQUIREMENTS. NO TIBCO DEALER, DISTRIBUTOR, AGENT OR EMPLOYEE IS AU-
+THORIZED TO MAKE ANY MODIFICATIONS, EXTENSIONS OR ADDITIONS TO THIS WARRANTY.
+
+Indemnity.  If Customer obtained the Software from TIBCO directly,  then  TIBCO
+agrees  at its own expense to defend or, at its option, to settle, any claim or
+action brought against Customer to the extent it is based on a claim  that  the
+unmodified  Software  infringes any patent issued by the United States, Canada,
+Australia, Japan, or any member of the European Union, or any copyright, or any
+trade secret of a third party; and TIBCO will indemnify and hold Customer harm-
+less from and against any damages, costs and fees reasonably incurred  (includ-
+ing  reasonable  attorneys' fees) that are attributable to such claim or action
+and which are assessed against Customer in a final judgment; provided that TIB-
+CO is promptly notified in writing of such claim, TIBCO has the exclusive right
+to control such defense and/or settlement, and Customer shall  provide  reason-
+able  assistance (at TIBCO's expense) in the defense thereof. In no event shall
+Customer settle any claim, action or proceeding without TIBCO's  prior  written
+approval.  In the event of any such claim, litigation or threat thereof, TIBCO,
+at its sole option and expense, shall (a) procure for  Customer  the  right  to
+continue  to  use the Software or (b) replace or modify the Software with func-
+tionally equivalent software. If such settlement or modification is not commer-
+cially  reasonable  (in the reasonable opinion of TIBCO), TIBCO may cancel this
+End User License Agreement upon sixty days prior written  notice  to  Customer,
+and refund to Customer the unamortized portion of the license fees paid to TIB-
+CO by Customer based on a five-year straight-line  depreciation.  This  Section
+states  the  entire  liability of TIBCO with respect to the infringement of any
+intellectual property rights, and Customer hereby expressly  waives  any  other
+liabilities  or obligations of TIBCO with respect thereto. The foregoing indem-
+nity shall not apply to the extent any infringement could have been avoided  by
+use of the then-current release.
+
+Limitation of Liability. EXCEPT AS PROVIDED UNDER INDEMNITY OR RESULTING FROM A
+BREACH OF CONFIDENTIALITY (THE "EXCLUDED MATTERS"), IN  NO  EVENT  WILL  EITHER
+PARTY  OR  TIBCO'S  LICENSORS  BE  LIABLE FOR ANY LOST DATA, LOST REVENUE, LOST
+PROFITS, DAMAGE TO REPUTATION, BUSINESS INTERRUPTION, OR  ANY  OTHER  INDIRECT,
+INCIDENTAL,  CONSEQUENTIAL,  SPECIAL,  PUNITIVE,  EXEMPLARY OR ANY SIMILAR TYPE
+DAMAGES ARISING OUT OF THIS AGREEMENT, THE USE OR  THE  INABILITY  TO  USE  THE
+SOFTWARE,  OR THE PROVISION OF ANY MAINTENANCE OR SERVICES, EVEN IF A PARTY HAS
+BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. EXCEPT FOR THE  EXCLUDED  MAT-
+TERS,  IN  NO  EVENT SHALL A PARTY BE LIABLE TO THE OTHER, WHETHER IN CONTRACT,
+TORT (INCLUDING ACTIVE OR PASSIVE NEGLIGENCE), BREACH OF  WARRANTY,  CLAIMS  BY
+THIRD  PARTIES OR OTHERWISE, EXCEED THE PRICE PAID BY CUSTOMER UNDER THE APPLI-
+CABLE ORDERING DOCUMENT.
+
+THE FOREGOING LIMITATIONS SHALL APPLY EVEN IF THE ABOVE-STATED REMEDY OR LIMIT-
+ED  WARRANTY  FAILS  OF ITS ESSENTIAL PURPOSE. BECAUSE SOME STATES OR JURISDIC-
+TIONS DO NOT ALLOW LIMITATION OR EXCLUSION OF CONSEQUENTIAL OR INCIDENTAL  DAM-
+AGES, THE ABOVE LIMITATION MAY NOT APPLY TO CUSTOMER.
+
+Confidentiality.   "Confidential  Information" means the terms of this End User
+License Agreement; all information marked by the disclosing  party  as  propri-
+etary  or confidential; any provided software, related documentation or related
+performance test results derived by Customer; and any methods, concepts or pro-
+cesses utilized in provided software or related documentation. Confidential In-
+formation shall remain the sole property of the disclosing party and shall  not
+be disclosed to any non-Authorized User of either TIBCO or Customer without the
+prior written consent of the disclosing party. If Confidential  Information  is
+communicated orally, such communication shall be confirmed as "Confidential" in
+writing within thirty days of such disclosure. The parties agree to protect the
+Confidential Information of the other in the same manner it protects the confi-
+dentiality of similar information and data of its own (and at all  times  exer-
+cising  at least a reasonable degree of care). Except with respect to the Soft-
+ware, items will not be deemed Confidential Information if (i) available to the
+public  other  than by a breach of an agreement with TIBCO, (ii) rightfully re-
+ceived from a third party not in breach of any obligation  of  confidentiality,
+(iii)  independently developed by one party without use of the Confidential In-
+formation of the other; (iv) known to the recipient at the time  of  disclosure
+(other  than  under  a separate confidentiality obligation); or (v) produced in
+compliance with applicable law or court order, provided the other party is giv-
+en reasonable notice of the same. Both parties agree to indemnify the other for
+any damages the other may sustain resulting from their unauthorized use  and/or
+disclosure  of the other's Confidential Information. Such damages shall include
+reasonable expenses incurred in seeking both legal and equitable  remedies.  To
+the extent required by law, at Customer's request, TIBCO shall provide Customer
+with the interface information needed to achieve interoperability  between  the
+Software  and  another independently created program, on payment of TIBCO's ap-
+plicable fee. Customer agrees to observe obligations  of  confidentiality  with
+respect to such information.
+
+To  the  extent TIBCO is exposed to individual personal data owned or otherwise
+held by Customer during the provision of Services, which is subject to  various
+data  protection  laws  and/or  regulations ("Protected Data"), TIBCO agrees to
+treat such Protected Data in accordance with the Customer Privacy and  Security
+Statement  set  forth  at http://www.tibco.com/customer_privacy_security_state-
+ment.jsp (the "Statement"). The policies and procedures set forth in the State-
+ment  as  well  as  those  set forth in the Data Protection Policy Statement at
+http://www.tibco.com/resources/data_protection_statement.pdf are  in  place  to
+meet  TIBCO's  obligations for the protection, integrity and confidentiality of
+any Protected Data which exceed TIBCO's standard obligations to safeguard  Con-
+fidential Information.
+
+Export.   Software, including technical data, is subject to U.S. export control
+laws, including the U.S. Export Administration Act and its  associated  regula-
+tions,  and  may be subject to export or import regulations in other countries.
+Customer agrees to comply strictly with all such regulations and agrees to  ob-
+tain all necessary licenses to export, re-export, or import Software.
+
+Government  Use.   If  the  Software, Maintenance or Services are being or have
+been acquired with U.S. Federal Government funds, or Customer is an agency, de-
+partment,  or  other entity of the United States Government ("Government"), the
+use, duplication, reproduction, release, modification, disclosure  or  transfer
+of  the  Software, Maintenance or Services, or any related documentation of any
+kind, including technical data, or manuals, is restricted  in  accordance  with
+Federal Acquisition Regulation 12.212 for civilian agencies and Defense Federal
+Acquisition Regulation Supplement 227.7202 for military agencies. The Software,
+Maintenance  and Services are COMMERCIAL ITEMS AS DEFINED BY THE FEDERAL ACQUI-
+SITION REGULATION. Use of the Software, Maintenance and Services by the Govern-
+ment  is  further  restricted  according to the terms of this Agreement and any
+amendment hereto.
+
+Orders.  An Ordering Document means any purchase  order,  similar  document  or
+agreement  requesting  Software, Maintenance or Services, which shall be deemed
+accepted only by issuance of a TIBCO invoice and solely for purposes of  admin-
+istrative  convenience.  None of the terms of the Ordering Document (other than
+the Software product name, Number of Units, level of  Maintenance,  description
+of  Services,  and fees due in connection therewith) shall apply for any reason
+or purpose whatsoever, regardless of any statement on any Ordering Document  to
+the  contrary, unless countersigned by an officer of TIBCO. This Agreement con-
+stitutes the entire agreement between the parties with respect to  the  use  of
+the  Software,  Maintenance and Services, and supersedes all proposals, oral or
+written, and all other representations, statements, negotiations and  undertak-
+ings relating to the subject matter hereof. All orders of Software, Maintenance
+or Services by Customer to TIBCO shall be deemed to occur with or without  ref-
+erence to, under the terms of this End User License Agreement, unless expressly
+superseded by a signed written agreement between the parties. Neither  the  li-
+cense  to  use the Software granted in this Agreement nor the obligation to pay
+the license fees set forth above are dependent upon the performance by any par-
+ty  of  any  Services  or  the supply of any other software program or product.
+Software shall be delivered electronically, and delivery deemed  complete  when
+the Software is made available for download by Customer.
+
+Termination.   Maintenance  or  Services may be terminated: (a) by either party
+upon a default of the other, such default remaining uncured  for  fifteen  days
+from  written  notice  from  the  non-defaulting party; (b) upon the filing for
+bankruptcy or insolvency of the other party, (c) by  either  party  upon  prior
+written  notice at least sixty (60) days prior to the end of any annual Mainte-
+nance term; or (d) by Customer (for Services), upon ten days prior written  no-
+tice  or  30  days prior written notice by TIBCO. Termination of Maintenance or
+Services shall not terminate this End User License Agreement. Customer may ter-
+minate  this End User License Agreement in its entirety at any time by destroy-
+ing all copies of the Software. Upon termination or expiration of this End User
+License  Agreement  in  its entirety, for any reason, Customer must cease using
+and return or destroy all copies of the Software. Customer's obligation to  pay
+accrued  charges and any fees due as of the date of termination, as well as the
+sections entitled "Confidentiality", "Limited Warranty" and "Limitation of Lia-
+bility" shall survive any such termination.
+
+Authority.   You  hereby represent and warrant that you have full power and au-
+thority to accept the terms of this End User License  Agreement  on  behalf  of
+Customer,  and that Customer agrees to be bound by this End User License Agree-
+ment.
+
+Definitions.  In connection with this End User License Agreement Software prod-
+uct  definitions  are  as set forth at http://tibco.com/software/productdefini-
+tions.jsp which are hereby incorporated into the End User License Agreement and
+the  following  capitalized  terms shall have the following meaning: "Customer"
+means the original purchaser or licensee of the Software and any permitted suc-
+cessors  and  assigns; "Documentation" means text material that accompanies the
+Software on delivery, which describes how to make use of that software. "Enter-
+prise"  means  an unlimited Number of Units of the Software set forth in an Or-
+dering Document as Enterprise, to be deployed by Customer during  a  period  of
+one year (or such other period of time set forth in the Ordering Document) from
+the Purchase Date (the "Enterprise Term"), at which time, the Number  of  Units
+then  deployed  in  Production and Non-Production use by Customer becomes fixed
+and Customer may not thereafter deploy additional Units. During the  Enterprise
+Term,  Customer's  right to deploy an unlimited Number of Units does not extend
+to any entity which acquires, is acquired by, merged into,  or  otherwise  com-
+bined with Customer. Customer hereby agrees to provide TIBCO, within sixty (60)
+days after the end of the Enterprise Term, with written notice of the Number of
+Units  deployed  at the end of the Enterprise Term by Unit and License Type. In
+the event Customer elects to renew Maintenance (subject to the section entitled
+"Termination"), then during the Enterprise Term and for the first annual renew-
+al thereafter, TIBCO agrees the annual Maintenance fee  for  the  Software  li-
+censed  on  an  Enterprise basis shall not increase by more than the percentage
+rate change in the United States Department of Labor - Consumer Price Index for
+All  Urban  Consumers (CPI-U) for the twelve month period immediately preceding
+the anniversary date of Maintenance. "Purchase Date" means the date the  Order-
+ing Document is accepted by TIBCO. "Project" means an unlimited Number of Units
+of the Software set forth in an Ordering Document as Project, to be deployed by
+Customer  solely  in  connection with the description and scope of the Customer
+project set forth in the Ordering Document, during a period  of  one  year  (or
+such  other  time  period set forth in the Ordering Document) from the Purchase
+Date (the "Project Term"), at which time, the Number of Units then deployed  in
+Production  and  Non-Production  use by Customer becomes fixed and Customer may
+not thereafter deploy additional Units. During  the  Project  Term,  Customer's
+right  to  deploy an unlimited Number of Units does not extend beyond the scope
+of the Project as set forth herein or to any entity which acquires, is acquired
+by, merged into, or otherwise combined with Customer. Customer hereby agrees to
+provide TIBCO, within sixty (60) days after the end of the Project  Term,  with
+written  notice  of the Number of Units deployed at the end of the Project Term
+by Unit and License Type. In the event Customer  elects  to  renew  Maintenance
+(subject  to  the section entitled "Termination"), then during the Project Term
+and for the first annual renewal thereafter, TIBCO agrees  the  annual  Mainte-
+nance  fee  for  the Software licensed on a Project basis shall not increase by
+more than the percentage rate change in the United States Department of Labor -
+Consumer Price Index for All Urban Consumers (CPI-U) for the twelve month peri-
+od immediately preceding the anniversary date of Maintenance. "Severity"  means
+the  impact  levels of an error, defect or malfunction, which under Maintenance
+are determined by TIBCO as follows: "Severity 1"  is  an  emergency  production
+situation  where  the  Software is totally inoperable or fails catastrophically
+and there is no workaround; "Severity 2" is a detrimental situation (and  there
+is no workaround) where (a) performance degrades substantially under reasonable
+loads causing a severe impact on use, (b) the Software is usable but materially
+incomplete;  or  (c)  one or more mainline functions or commands is inoperable;
+"Severity 3" is where the Software is usable, but does not provide  a  function
+in  the most convenient manner; and "Severity 4" is a minor problem or documen-
+tation error. "Software" means the most  current,  generally  available  object
+code  version  on all Platforms then currently available. Software does not in-
+clude multiple Platforms if the software product licensed on a Platform specif-
+ic  basis  as designated in the Software product name or as otherwise listed in
+an Ordering Document, including its Documentation and  any  subsequent  Updates
+provided  under  Maintenance. For the purposes of the product definitions where
+"TIBCO Software" or "Licensor Software" is used it shall have the same  meaning
+as  "Software".  "TIBCO" means TIBCO Software Inc. and any entities, regardless
+of corporate status, controlled by, controlling, or under common  control  with
+TIBCO  Software  Inc. "Updates" means Software bug fixes, enhancements, and up-
+dates, if and when made generally available by TIBCO.  Updates  provided  under
+Maintenance,  warranty  or which are provided for any other reason by TIBCO, or
+TIBCO's authorized resellers or distributors (if applicable),  are  subject  to
+the license rights, limitations and restrictions of the End User License Agree-
+ment.
+
+Special Product Provision.  Embedded/Bundled Products. Some Software embeds  or
+bundles  other  Software. Use of such embedded or bundled Software is solely to
+enable the functionality of the Software licensed under this Agreement, and may
+not  be  used or accessed by any other Software, or for any other purpose. Bun-
+dle. A collection of Software listed in TIBCO's then current price book  to  be
+sold together under a collective name such as "XXX Bundle" which consists of X,
+Y and Z. The Software which comprises a Bundle must be used in accordance  with
+any  specific license restrictions imposed in this Agreement and solely in con-
+junction with the components of the Bundle; provided that  a  Bundle  component
+may  be  accessed  by or communicate with other Software separately licensed by
+Customer. In no event may the Software which comprises a Bundle be  used  on  a
+standalone  basis.  A Bundle is sold at a discount to the cost of licensing the
+individual components due to the restrictions imposed on the use of the  Bundle
+by  this  section  and any specific license restrictions imposed by this Agree-
+ment. If the terms of this Agreement with regard to a Bundle are breached,  and
+such  breach  is  not cured within ten (10) days of TIBCO notifying Customer in
+writing of the breach, TIBCO shall be entitled to invoice Customer for the list
+price of the individual components of the Bundle based upon the manner in which
+Customer has deployed and is making use of the components.  Open  Source  Soft-
+ware.  If  Customer uses open source software or any other third party software
+not supplied by TIBCO in conjunction with the Software,  Customer  must  ensure
+that  its  use  does  not: (i) create, or purport to create, obligations of use
+with respect to the Software; or (ii) grant, or purport to grant, to any  third
+party  any  rights to or immunities under TIBCO's intellectual property or pro-
+prietary rights in the Software. Customer also may not  combine  Software  with
+programs  licensed  under  the GNU General Public License ("GPL") in any manner
+that could cause, or could be interpreted or asserted to cause, the Software or
+any modifications thereto to become subject to the terms of the GPL. Third Par-
+ty Software. Third Party Software means third-party software identified by  its
+company  and/or product name, the provision of which by TIBCO is made solely as
+an accommodation and in lieu of Customer purchasing a license  to  Third  Party
+Software directly from the third party vendor.
+
+General.   All  payments of fees due shall be made in U.S. dollars, net 30 from
+Purchase Date, or, for any other amounts coming due hereafter, net 30 from TIB-
+CO's invoice. Fees do not include sales, use, withholding, value-added or simi-
+lar taxes, and Customer agrees to pay all sales, use,  value-added,  goods  and
+services,  consumption, withholding, excise and any other similar taxes or gov-
+ernment charges, exclusive of TIBCO's income tax. Customer  agree  to  pay  all
+reasonable  costs incurred (including reasonable attorneys' fees) in collecting
+past due amounts. Except as set forth in the sections entitled "Limited Warran-
+ty" and "Indemnity" all fees paid under or in connection with this End User Li-
+cense Agreement are non-refundable and no right of set-off  exists.  A  service
+charge  of  one  and one-half percent per month will be applied to all invoices
+that are not paid on time. No delay in the performance of any obligation by ei-
+ther  party,  excepting  all  obligations  to  make payment, shall constitute a
+breach of this End User License Agreement to the extent  caused  by  force  ma-
+jeure.  Customer  hereby grants TIBCO and its independent auditors the right to
+audit Customer's compliance with this End User License Agreement. If  any  por-
+tion  of  this End User License Agreement is found to be void or unenforceable,
+the remaining provisions shall remain in full force and effect.
+
+Governing Law.  This End User License Agreement shall be governed by  and  con-
+strued in accordance with the laws of the State of California, United States of
+America, as if performed wholly within the state and without giving  effect  to
+the  principles  of conflict of law. The United Nations Convention on Contracts
+for the International Sale of Goods is excluded from application hereto.
+
+Version 5.6, April 2008
+
+Third-Party Software Notices
+
+SNMP 4.2.3
+
+This product includes SNMP software which is copyrighted (c) 1989,  1991,  1992
+by  Carnegie  Mellon  University;  Derivative  Work - 1996, 1998-2000 copyright
+1996, 1998-2000 The Regents of the University of California.
+
+EOF
+
+askyn "Do you agree to the License Agreement?"
+
+if [ $? -ne 0 ]; then
+  echo "If you don't agree to the License Agreement you can't install this software"
+  exit 1
+fi
+
+askyn "Do you wish to continue installing TIBCO SmartSockets 6.8.2?"
+
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+askyn "Would you like to install optimized only version? "
+if [ $? -ne 1 ]; then
+  tar xf file1.tar
+  cd ss68
+
+  zcat ../file2.tar.Z | tar xf -
+  zcat ../file4.tar.Z | tar xf -
+  zcat ../file5.tar.Z | tar xf -
+  if [ -f ../file6.tar.Z ]; then
+     zcat ../file6.tar.Z | tar xf -
+  fi
+
+else
+  askyn "Would you like to install both optimized and debug versions? "
+  if [ $? -ne 1 ]; then
+    tar xf file1.tar
+    cd ss68
+
+    zcat ../file2.tar.Z | tar xf -
+    zcat ../file3.tar.Z | tar xf -
+    zcat ../file4.tar.Z | tar xf -
+    zcat ../file5.tar.Z | tar xf -
+    if [ -f ../file6.tar.Z ]; then
+       zcat ../file6.tar.Z | tar xf -
+    fi
+  else
+    echo "Please run installSS again in order to select a version to install."
+    exit 1
+  fi
+fi
+
+cd ..
+
+echo "Installation of TIBCO SmartSockets has completed successfully"
+echo ""
+echo ""
+
+askyn "Would you like to view the TIBCO SmartSockets readme?"
+
+if [ $? -ne 1 ]; then
+  cat README_SS.txt | more
+  echo ""
+fi
+

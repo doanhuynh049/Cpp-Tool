@@ -1,0 +1,27 @@
+:
+
+#
+# Copyright (c) 1991-2006 TIBCO Software Inc.
+# All rights reserved.
+# For more information, please contact:
+# TIBCO Software Inc., Palo Alto, California, USA
+#
+# $Id: //dev/packages/build/dev/68/src/scripts/rtaskdir.sh#1 $
+#
+
+# rtaskdir -- ask for a directory name
+# echo directory name that user types in
+#
+
+# ----------------------------------------------------------------------
+# Talarian Corporation		If you encounter any difficulties with 
+# 333 Distel Circle		this script, contact Talarian Tech
+# Los Altos, CA 94022		Support.
+# (650) 965-8050		E-mail: support@talarian.com
+# ----------------------------------------------------------------------
+
+#set -x
+
+read answer
+echo $answer
+exit 0

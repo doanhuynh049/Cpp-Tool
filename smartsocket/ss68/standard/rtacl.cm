@@ -1,0 +1,29 @@
+/* Copyright (c) 1991-2006 TIBCO Software Inc. */
+/* All rights reserved. */
+/* For more information, please contact: */
+/* TIBCO Software Inc., Palo Alto, California, USA */
+/**/
+/* $Id: //dev/packages/tsi/security_drivers/basic/dev/68/src/standard/rtacl.cm#1 $ */
+
+/* -------------------------------------- */
+/* rtacl.cm -- defaults for RTacl options */
+/* -------------------------------------- */
+
+/* --------------------------------- */
+/* Generic options for all processes */
+/* --------------------------------- */
+setopt prompt           "ACL> "
+setopt time_format      full
+setopt monitor_scope        /...
+setopt trace_level      info
+setopt trace_file       stdout
+
+/* ---------------------------- */
+/* RTacl-specific configuration */
+/* ---------------------------- */
+alias eval evaluate
+
+/* ---------------------- */
+/* RTacl-specific options */
+/* ---------------------- */
+

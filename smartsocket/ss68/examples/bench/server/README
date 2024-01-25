@@ -1,0 +1,236 @@
+/*
+ * Copyright (c) 1991-2006 TIBCO Software Inc.
+ * All rights reserved.
+ * For more information, please contact:
+ * TIBCO Software Inc., Palo Alto, California, USA
+ *
+ * $Id: //dev/packages/examples/ss/dev/68/src/bench/server/README#1 $
+ */
+
+README for RTserver benchmark example
+------ --- -------- --------- -------
+
+  This directory contains four C programs, send.c, receive.c, srvbench.c, and
+maketype.c for producing simple SmartSockets publish/subscribe benchmarks.
+
+  Maketype reads in a file, (the makefile defaults to grammar.dat) which
+contains a description of a message grammar, and generates a file (gen.c).
+The generated file is compiled into the send, receive, and srvbench
+executables, allowing the benchmarks to run with a user supplied grammar.
+The user supplied grammar is similar to the message type grammar described in
+the SmartSockets documentation. However, string arrays, message arrays, and
+messages are not included in this grammar. Also the size of arrays, strings,
+and the looping construct are provided in parentheses after the type, for
+example:
+
+  int4_array(20) real8 { int4 str(15) }(100)
+
+  Since srvbench starts and stops RTserver during benchmarking, do not run
+srvbench when other users depend on RTserver being active.
+
+  Srvbench reads benchmark information from an input file you specify on the
+command line.  For each line in the input file, a benchmark result line will be
+produced.  The input file is formatted accordingly:
+
+column  meaning
+------  -------
+  1     number of messages
+  2     frequency of ACKS
+  3     number of grammar iterations
+  4     number of receiver processes
+  5     traverse each message on receive (boolean; 0-false or 1-true)
+  6     build each message on send (boolean; 0-false or 1-true)
+
+  The benchmark result format is intended to be self-explanatory.  All seconds
+by default are wall clock seconds (not CPU seconds).
+
+
+              UNIX Instructions
+
+  Build the four C programs.
+
+    $ cd $RTHOME/examples/bench/server
+    $ make
+
+  The RTserver benchmarks by default run all processes on the same node and do
+not send any data across the network.  To run RTserver on a remote node (and
+thus send all data across the network), first set the environment variable
+BENCH_SERVER_NODE to the name of a remote node.  The remote node must have
+SmartSockets installed on it, and must be of the same architecture as this
+node.  For example, to run RTserver on the remote node "conan", use the
+following commands.
+
+    # C shell
+    $ setenv BENCH_SERVER_NODE conan
+    # Bourne/Korn shell
+    $ BENCH_SERVER_NODE=conan; export BENCH_SERVER_NODE
+
+  Now run the benchmark.
+
+      $ ./srvbench.x bench.in bench.result
+
+  It is possible to view each benchmark result while srvbench is running.  If
+you have chosen 'bench.result' as the output file, type 'tail -f bench.result'
+in another xterm window.  To stop 'tail' hit control-C to stop the 'tail'
+process.
+
+  Once the benchmark results are generated, the optional serveravg script can
+be used to produce an average of the results.
+
+    $ srvavg bench.result
+
+
+              VMS Instructions
+
+  Build the four C programs.
+
+    $ set def rthome:[examples.bench.server] ! get to the right dir
+    $ @makefile.com
+
+  The RTserver benchmarks by default run all processes on the same node and do
+not send any data across the network.  To run RTserver on a remote node (and
+thus send all data across the network), first set the logical BENCH_SERVER_NODE
+to the name of a remote node.  The remote node must have SmartSockets installed
+on it, and must be of the same architecture as this node.  For example, to run
+RTserver on the remote node "conan", use the following commands.
+
+    $ define BENCH_SERVER_NODE conan
+
+  Now run the benchmark (using a slightly smaller version of bench.in).
+
+    $ srvbench benchvms.in bench.result
+
+
+              Windows Instructions
+
+  Build the four C programs.
+
+  In the %RTHOME%\examples\bench\server directory, there are four Visual C++
+.mak files provided, one for each of the four executables. (mktpw32m.mak,
+recvw32m.mak, sendw32m.mak, srbnw32m.mak) You can tweak the settings to match
+your environment.  If you are using a Borland compiler, you can look at the
+.mak files to get an idea of what is needed to make the executables.  It is
+relatively simple to create a project from scratch for the benchmarks.
+
+    $ nmake /f mktpw32m.mak
+    $ maketype.exe grammar.dat
+    $ nmake /f recvw32m.mak
+    $ nmake /f sendw32m.mak
+    $ nmake /f srbnw32m.mak
+
+    There is also a windows makefile provided. (makefile.win)
+
+  The RTserver benchmarks by default run all processes on the same node and do
+not send any data across the network.  To run RTserver on a remote node (and
+thus send all data across the network), first set the environment variable
+BENCH_SERVER_NODE to the name of a remote node.  The remote node must have
+SmartSockets installed on it, and must be of the same architecture as this
+node.  For example, to run RTserver on the remote node "conan", use the
+following commands.
+
+    # Windows NT Native Shell
+    $ set BENCH_SERVER_NODE=conan
+    # Bourne/Korn shell
+    $ BENCH_SERVER_NODE=conan; export BENCH_SERVER_NODE
+
+  Now run the benchmark.
+
+    $ srvbench.exe bench.in bench.result
+
+  Windows Hints:  We recommend that you exit all non-essential applications
+running on the Windows machine before starting the benchmarks because some of
+the larger tests require a lot of free RAM.  If you have less than 32 MB on
+your computer, you may have to comment out the last few tests in bench.in.
+
+              Guaranteed Message Delivery
+
+  The RTserver benchmarks by default do not use guaranteed message delivery but
+instead use a delivery mode of BEST_EFFORT.  To enable guaranteed message
+delivery set the environment variable (logical on VMS) BENCH_DELIVERY_MODE to
+either ALL or SOME.  When using guaranteed message delivery the RTserver
+benchmarks will by default use file-backed GMD.  To use memory-only GMD set the
+environment variable (logical on VMS) BENCH_MEMORY_GMD.  On a SPARCstation
+5/110 with SunOS 4.1.4 at TIBCO file-backed GMD is on average 70% as fast as
+not using GMD due to the extra file I/O, and memory-only GMD is on average 83%
+as fast as not using GMD due to the extra copies of messages kept in memory.
+
+
+              Advanced Benchmark Notes
+
+  Elapsed time is by default measured in wall clock seconds not CPU utilization
+seconds.  This provides a more realistic benchmark, especially when using a
+remote RTserver (since the processes sit idle a lot waiting for the data to
+cross the network) or a multiprocessor node (where CPUs can be used in
+parallel).  CPU time can be used if desired by setting the environment variable
+(logical on VMS) BENCH_MEASURE_CPU_TIME.
+
+  The RTserver benchmarks provide much configuration flexibility.  All the
+processes can use startup command files (read send.c and receive.c for details
+on how they use startup command files), which allow all RTserver and/or
+RTclient options to be set (e.g., change the network protocol used, connect the
+sender and receiver to different RTservers in a matrix, etc.).  The current
+RTserver benchmarks are designed not to be turnkey benchmarks for every
+possible configuration, but as as a flexible starting point for most
+configurations.
+
+  The benchmarks can be run with 64-bit clients and servers on platforms which
+support both 32- and 64-bit modes. To use 64-bit clients, either use the
+appropriate compiler flag ('-64bit' if using rtlink), or if using the provided
+'makefile', set the environment variable BENCH_EXTRA_LINK_ARGS to '-64bit' and
+re-'make' the client programs (warning: 'make clean' will delete any '.out'
+files!). To instruct the srvbench program to start a 64-bit server, set the
+environment variable BENCH_SERVER_64BIT.
+
+  Because bench.in was developed using the local (non-network) IPC protocol,
+the number of messages in each line of bench.in is often too high when using a
+remote RTserver (i.e., it runs longer than is desirable or useful).  The
+environment variable (logical on VMS) BENCH_MSG_SCALE_FACTOR can be set to a
+real number which is multiplied by the number of messages used.  A default
+scale factor of 0.4 is applied when a remote RTserver is used.
+
+  The benchmarks provide a rudimentary mechanism for flow-control. The sender,
+will wait for acknowledgments from all the receivers after sending some number
+of messages, and the receivers will generate the acknowledgment after receiving
+some number of messages. The rate at which the acks are generated (frequency of
+acks) is set in the second column of the benchmark input file. (bench.in)
+
+  The output file contains messages and bytes of data per second as its main
+benchmark value. Data bytes are the number of bytes specified by the grammar
+multiplied by the number of iterations of the grammar specified in the
+benchmark input line. For example the default grammar (int4_array(128))
+contains 512 bytes of data. (128 multiplied by the size in an int4)
+
+  The send program normally starts the receive program(s).  If the environment
+variable (logical on VMS) BENCH_RUN_MANUALLY is set, then the receive program
+can be started manually.  This is useful for running the sender and receiver on
+different nodes.
+
+  When using a remote RTserver, the default benchmark directory is
+used as the location for the needed benchmark files.
+
+    UNIX:     $RTHOME/examples/bench/server
+    VMS:      rthome:[examples.bench.server]
+    Windows:  %RTHOME%\examples\bench\server
+
+  The environment variable (logical on VMS) BENCH_DIR can be set to the name of
+an alternate directory.  This is useful when running the RTserver benchmarks
+from your own home directory, for example.
+
+  When using a remote RTserver, the remote node can be of a different
+architecture if the rtserver_o.c program is compiled on the remote node (see
+makefile or makefile.com the proper command to run to do this).  If the local
+node is UNIX and the remote node is VMS, then set the environment variable
+BENCH_SERVER_VMS so that the remote RTserver will be started using VMS DCL
+commands.  If the local node is VMS and the remote node is UNIX, then set the
+logical BENCH_SERVER_UNIX so that the remote RTserver will be started using
+UNIX shell commands.
+
+  The RTserver benchmarks don't support automatically starting the receivers on
+a remote node.  If RTserver is on a remote node, it doesn't seem to change the
+performance much (since the Ethernet, not any CPU, is the bottleneck).
+
+  The RTserver benchmarks don't support automatically using multiple RTservers,
+but you can configure this manually by starting an RTserver manually, modifying
+rtserver.cm in this directory to connect to the first RTserver, and creating
+receive.cm (or send.cm) so that the receiver(s) (or sender) connect to the
+first RTserver.

@@ -1,0 +1,8 @@
+#! /bin/csh -f
+
+if ($?DISPLAY) then
+  xterm -geometry -600-20 -T "Backup Receiver" -e ./udrecv.x backup.cm
+else
+  ./udrecv.x backup.cm
+endif
+

@@ -1,0 +1,8 @@
+#! /bin/csh -f
+
+if ($?DISPLAY) then
+  xterm -geometry -2-20 -T "Primary Receiver" -e ./udrecv.x primary.cm
+else
+  ./udrecv.x primary.cm
+endif
+

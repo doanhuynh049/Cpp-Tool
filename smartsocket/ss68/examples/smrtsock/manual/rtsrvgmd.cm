@@ -1,0 +1,14 @@
+/* Copyright (c) 1991-2006 TIBCO Software Inc. */
+/* All rights reserved. */
+/* For more information, please contact: */
+/* TIBCO Software Inc., Palo Alto, California, USA */
+/**/
+/* $Id: //dev/packages/examples/ss/dev/68/src/c/manual/rtsrvgmd.cm#1 $ */
+
+// rtsrvgmd.cmd -- RTserver GMD example startup command file
+
+echo Entering rtsrvgmd.cm.
+setopt client_reconnect_timeout 5.0
+// setopt init_connect_timeout 5.0
+setopt zero_recv_gmd_failure true
+unsetopt server_names // simplify example with only one RTserver
